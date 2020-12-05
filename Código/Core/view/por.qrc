@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="por">
+    <file>portada.jpg</file>
+    <file>principal.png</file>
+  </qresource>
+</RCC>

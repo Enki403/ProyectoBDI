@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>Login</class>
+ <widget class="QMainWindow" name="Login">
   <property name="enabled">
    <bool>true</bool>
   </property>
@@ -34,7 +34,7 @@
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>60</y>
+      <y>90</y>
       <width>161</width>
       <height>41</height>
      </rect>
@@ -54,7 +54,7 @@
     <property name="geometry">
      <rect>
       <x>90</x>
-      <y>20</y>
+      <y>50</y>
       <width>281</width>
       <height>151</height>
      </rect>
@@ -70,7 +70,7 @@
     <property name="geometry">
      <rect>
       <x>270</x>
-      <y>120</y>
+      <y>150</y>
       <width>71</width>
       <height>41</height>
      </rect>
@@ -86,11 +86,11 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:28pt; font-style:italic; color:#ececec;&quot;&gt;APP&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="loginButton">
+   <widget class="QPushButton" name="buttonLogin">
     <property name="geometry">
      <rect>
       <x>110</x>
-      <y>390</y>
+      <y>420</y>
       <width>181</width>
       <height>41</height>
      </rect>
@@ -107,17 +107,17 @@
 color: rgb(19, 98, 173);</string>
     </property>
     <property name="text">
-     <string>IINICIAR SESION</string>
+     <string>LOGIN</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEditPassword">
+   <widget class="QLineEdit" name="textLinePassword">
     <property name="enabled">
      <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
       <x>80</x>
-      <y>300</y>
+      <y>330</y>
       <width>251</width>
       <height>41</height>
      </rect>
@@ -147,17 +147,17 @@ color: rgb(19, 98, 173);</string>
      <set>Qt::AlignCenter</set>
     </property>
     <property name="placeholderText">
-     <string>CONTRASEÑA</string>
+     <string>PASSWORD</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEditUser">
+   <widget class="QLineEdit" name="textLineUser">
     <property name="enabled">
      <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
       <x>80</x>
-      <y>220</y>
+      <y>250</y>
       <width>251</width>
       <height>41</height>
      </rect>
@@ -184,25 +184,15 @@ color: rgb(19, 98, 173);</string>
      <set>Qt::AlignCenter</set>
     </property>
     <property name="placeholderText">
-     <string>USUARIO</string>
+     <string>USERNAME</string>
     </property>
    </widget>
    <zorder>label_2</zorder>
    <zorder>label</zorder>
    <zorder>label_3</zorder>
-   <zorder>loginButton</zorder>
-   <zorder>lineEditPassword</zorder>
-   <zorder>lineEditUser</zorder>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>413</width>
-     <height>31</height>
-    </rect>
-   </property>
+   <zorder>buttonLogin</zorder>
+   <zorder>textLinePassword</zorder>
+   <zorder>textLineUser</zorder>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>

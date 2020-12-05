@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>LoadDrawing</class>
+ <widget class="QMainWindow" name="LoadDrawing">
   <property name="enabled">
    <bool>true</bool>
   </property>
@@ -96,7 +96,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="loginButton_2">
+   <widget class="QPushButton" name="buttonLoad">
     <property name="geometry">
      <rect>
       <x>140</x>
@@ -124,7 +124,7 @@ color: rgb(255, 255, 255);</string>
    <zorder>label</zorder>
    <zorder>label_3</zorder>
    <zorder>tableUsers</zorder>
-   <zorder>loginButton_2</zorder>
+   <zorder>buttonLoad</zorder>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>

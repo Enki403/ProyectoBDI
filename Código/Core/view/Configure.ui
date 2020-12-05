@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>Configure</class>
+ <widget class="QMainWindow" name="Configure">
   <property name="enabled">
    <bool>true</bool>
   </property>
@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>408</width>
-    <height>482</height>
+    <width>401</width>
+    <height>461</height>
    </rect>
   </property>
   <property name="mouseTracking">
@@ -34,7 +34,7 @@
     <property name="geometry">
      <rect>
       <x>160</x>
-      <y>60</y>
+      <y>80</y>
       <width>181</width>
       <height>41</height>
      </rect>
@@ -50,11 +50,11 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:24pt; color:#ececec;&quot;&gt;CONFIGURE&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="manageUsersbutton">
+   <widget class="QPushButton" name="buttonManageUsers">
     <property name="geometry">
      <rect>
       <x>70</x>
-      <y>180</y>
+      <y>200</y>
       <width>261</width>
       <height>41</height>
      </rect>
@@ -74,11 +74,11 @@ color: rgb(19, 98, 173);</string>
      <string>Manage Users</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="penColorButton">
+   <widget class="QPushButton" name="buttonPenColor">
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>270</y>
+      <y>290</y>
       <width>181</width>
       <height>31</height>
      </rect>
@@ -98,11 +98,11 @@ color: rgb(19, 98, 173);</string>
      <string>Pen Color</string>
     </property>
    </widget>
-   <widget class="QLabel" name="penColorLabel">
+   <widget class="QLabel" name="labelPenColor">
     <property name="geometry">
      <rect>
       <x>250</x>
-      <y>270</y>
+      <y>290</y>
       <width>121</width>
       <height>31</height>
      </rect>
@@ -128,7 +128,7 @@ color: rgb(19, 98, 173);</string>
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>0</y>
+      <y>20</y>
       <width>161</width>
       <height>101</height>
      </rect>
@@ -140,11 +140,11 @@ color: rgb(19, 98, 173);</string>
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="fillColorButton">
+   <widget class="QPushButton" name="buttonFillColor">
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>350</y>
+      <y>370</y>
       <width>181</width>
       <height>31</height>
      </rect>
@@ -164,11 +164,11 @@ color: rgb(19, 98, 173);</string>
      <string>Fil Color</string>
     </property>
    </widget>
-   <widget class="QLabel" name="filColorLabel">
+   <widget class="QLabel" name="labelFilColor">
     <property name="geometry">
      <rect>
       <x>250</x>
-      <y>350</y>
+      <y>370</y>
       <width>121</width>
       <height>31</height>
      </rect>
@@ -190,23 +190,38 @@ color: rgb(19, 98, 173);</string>
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <zorder>manageUsersbutton</zorder>
-   <zorder>penColorButton</zorder>
-   <zorder>penColorLabel</zorder>
+   <widget class="QPushButton" name="buttonReturn">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>10</y>
+      <width>111</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(20, 111, 223);
+color:rgb(239, 239, 239);</string>
+    </property>
+    <property name="text">
+     <string>RETURN</string>
+    </property>
+   </widget>
+   <zorder>buttonManageUsers</zorder>
+   <zorder>buttonPenColor</zorder>
+   <zorder>labelPenColor</zorder>
    <zorder>label_4</zorder>
    <zorder>label_3</zorder>
-   <zorder>fillColorButton</zorder>
-   <zorder>filColorLabel</zorder>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>408</width>
-     <height>31</height>
-    </rect>
-   </property>
+   <zorder>buttonFillColor</zorder>
+   <zorder>labelFilColor</zorder>
+   <zorder>buttonReturn</zorder>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>

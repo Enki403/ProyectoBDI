@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>CreateUser</class>
+ <widget class="QMainWindow" name="CreateUser">
   <property name="enabled">
    <bool>true</bool>
   </property>
@@ -34,7 +34,7 @@
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>20</y>
+      <y>70</y>
       <width>161</width>
       <height>41</height>
      </rect>
@@ -54,7 +54,7 @@
     <property name="geometry">
      <rect>
       <x>120</x>
-      <y>10</y>
+      <y>60</y>
       <width>181</width>
       <height>91</height>
      </rect>
@@ -70,7 +70,7 @@
     <property name="geometry">
      <rect>
       <x>250</x>
-      <y>70</y>
+      <y>120</y>
       <width>91</width>
       <height>31</height>
      </rect>
@@ -86,11 +86,11 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:24pt; font-style:italic; color:#ececec;&quot;&gt;USER&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="loginButton">
+   <widget class="QPushButton" name="buttonCreate">
     <property name="geometry">
      <rect>
       <x>110</x>
-      <y>390</y>
+      <y>440</y>
       <width>181</width>
       <height>41</height>
      </rect>
@@ -110,14 +110,14 @@ background-color: rgb(2, 233, 10);</string>
      <string>CREATE</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="passwordEditText">
+   <widget class="QLineEdit" name="textEditPassword">
     <property name="enabled">
      <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
       <x>80</x>
-      <y>310</y>
+      <y>360</y>
       <width>251</width>
       <height>41</height>
      </rect>
@@ -150,14 +150,14 @@ background-color: rgb(2, 233, 10);</string>
      <string>PASSWORD</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="nameEditText">
+   <widget class="QLineEdit" name="textEditName">
     <property name="enabled">
      <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
       <x>80</x>
-      <y>150</y>
+      <y>200</y>
       <width>251</width>
       <height>41</height>
      </rect>
@@ -187,14 +187,14 @@ background-color: rgb(2, 233, 10);</string>
      <string>NAME</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="UserEditText">
+   <widget class="QLineEdit" name="textEditUserName">
     <property name="enabled">
      <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
       <x>80</x>
-      <y>230</y>
+      <y>280</y>
       <width>251</width>
       <height>41</height>
      </rect>
@@ -224,11 +224,11 @@ background-color: rgb(2, 233, 10);</string>
      <string>USER NAME</string>
     </property>
    </widget>
-   <widget class="QLabel" name="infoCreateLabel">
+   <widget class="QLabel" name="labelSuccessfull">
     <property name="geometry">
      <rect>
       <x>90</x>
-      <y>450</y>
+      <y>500</y>
       <width>221</width>
       <height>31</height>
      </rect>
@@ -237,24 +237,39 @@ background-color: rgb(2, 233, 10);</string>
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="buttonReturnMenu">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>10</y>
+      <width>91</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(245, 245, 245);
+background-color: rgb(22, 155, 175);</string>
+    </property>
+    <property name="text">
+     <string>RETURN</string>
+    </property>
+   </widget>
    <zorder>label_2</zorder>
    <zorder>label</zorder>
    <zorder>label_3</zorder>
-   <zorder>loginButton</zorder>
-   <zorder>passwordEditText</zorder>
-   <zorder>nameEditText</zorder>
-   <zorder>UserEditText</zorder>
-   <zorder>infoCreateLabel</zorder>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>413</width>
-     <height>31</height>
-    </rect>
-   </property>
+   <zorder>buttonCreate</zorder>
+   <zorder>textEditPassword</zorder>
+   <zorder>textEditName</zorder>
+   <zorder>textEditUserName</zorder>
+   <zorder>labelSuccessfull</zorder>
+   <zorder>buttonReturnMenu</zorder>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>

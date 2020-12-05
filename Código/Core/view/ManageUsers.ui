@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>ManageUsers</class>
+ <widget class="QMainWindow" name="ManageUsers">
   <property name="enabled">
    <bool>true</bool>
   </property>
@@ -86,45 +86,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:28pt; font-style:italic; color:#ececec;&quot;&gt;Users&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QTableWidget" name="tableUsers">
-    <property name="geometry">
-     <rect>
-      <x>70</x>
-      <y>150</y>
-      <width>731</width>
-      <height>281</height>
-     </rect>
-    </property>
-    <column>
-     <property name="text">
-      <string>ID</string>
-     </property>
-     <property name="font">
-      <font>
-       <family>Noto Sans Cham</family>
-       <pointsize>12</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>LAST NAME</string>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>FIRST NAME</string>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>PASSWORD</string>
-     </property>
-    </column>
-   </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>60</x>
@@ -135,7 +97,7 @@
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QPushButton" name="loginButton_2">
+      <widget class="QPushButton" name="buttonCreate">
        <property name="font">
         <font>
          <pointsize>12</pointsize>
@@ -153,7 +115,7 @@ color: rgb(255, 255, 255);</string>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="loginButton_3">
+      <widget class="QPushButton" name="buttonEdit">
        <property name="font">
         <font>
          <pointsize>12</pointsize>
@@ -171,7 +133,7 @@ color: rgb(255, 255, 255);</string>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="loginButton_5">
+      <widget class="QPushButton" name="buttonDelete">
        <property name="font">
         <font>
          <pointsize>12</pointsize>
@@ -189,7 +151,7 @@ color: rgb(255, 255, 255);</string>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="loginButton_4">
+      <widget class="QPushButton" name="buttonUpdateList">
        <property name="font">
         <font>
          <pointsize>12</pointsize>
@@ -208,14 +170,10 @@ color: rgb(255, 255, 255);</string>
      </item>
     </layout>
    </widget>
+   <zorder>layoutWidget</zorder>
    <zorder>label_2</zorder>
    <zorder>label</zorder>
    <zorder>label_3</zorder>
-   <zorder>loginButton_2</zorder>
-   <zorder>tableUsers</zorder>
-   <zorder>loginButton_3</zorder>
-   <zorder>loginButton_4</zorder>
-   <zorder>loginButton_5</zorder>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>

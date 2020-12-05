@@ -1,4 +1,4 @@
-from tkinter_app.tkinter import *
+from tkinterApp.draw import *
 root = tkinter.Tk()
 drawingApp = DrawingApplication(root)
 

@@ -1,5 +1,4 @@
-# from tkinterApp.draw import *
-from Core import 
+from tkinterApp.draw import *
 root = tkinter.Tk()
 drawingApp = DrawingApplication(root)
 

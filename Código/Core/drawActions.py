@@ -4,8 +4,11 @@ import tkinter.colorchooser
 import tkinter.filedialog
 import xml.dom.minidom
 import json
-from tkinterApp.drawCommands import *
-from tkinterApp.drawActions import *
+import sys
+from Core.drawCommands import *
+from Core.drawActions import *
+from Core.configure import *
+from Core.portada_rc import *
 
 """
 * La clase contiene todas las acciones respecto al dibujo en referencia a la Base de Datos
@@ -65,7 +68,12 @@ class DrawAction():
     * Abre la ventana de configuracion de la cual solo el usuario administrador puede acceder.
     """
     def openConfigDialog(self):
-        print('Abriendo ventana de configuracion')
+        app = QtWidgets.QApplication(sys.argv)
+        Configure = QtWidgets.QMainWindow()
+        ui = Ui_Configure()
+        ui.setupUi(Configure)
+        Configure.show()
+        sys.exit(app.exec_())
     
     """
     * Realizar un parseo de los registros de un archivo, para convertirtir el dibujo que representa.
@@ -89,13 +97,13 @@ class DrawAction():
                     cmd = GoToCommand(x,y,width,color)
 
                 elif command == "Circle":
-                    radius = float(attr["radius"].value)
-                    width = float(attr["width"].value)
-                    color = attr["color"].value.strip()
+                    radius = float(current["radius"])
+                    width = float(current["width"])
+                    color = current["color"].strip()
                     cmd = CircleCommand(radius,width,color)
 
                 elif command == "BeginFill":
-                    color = attr["color"].value.strip()
+                    color = current["color"].strip()
                     cmd = BeginFillCommand(color)
 
                 elif command == "EndFill":
@@ -110,34 +118,6 @@ class DrawAction():
                 else:
                     raise RuntimeError("Unknown Command:" + command)
                 dt.graphicsCommands.append(cmd)
-            """ for commandElement in graphicsCommands:
-                print(type(commandElement))
-                command = commandElement.firstChild.data.strip()
-                attr = commandElement.attributes
-                if command == "GoTo":
-                    x = float(attr["x"].value)
-                    y = float(attr["y"].value)
-                    width = float(attr["width"].value)
-                    color = attr["color"].value.strip()
-                    cmd = GoToCommand(x,y,width,color)
-                elif command == "Circle":
-                    radius = float(attr["radius"].value)
-                    width = float(attr["width"].value)
-                    color = attr["color"].value.strip()
-                    cmd = CircleCommand(radius,width,color)
-                elif command == "BeginFill":
-                    color = attr["color"].value.strip()
-                    cmd = BeginFillCommand(color)
-                elif command == "EndFill":
-                    cmd = EndFillCommand()
-                elif command == "PenUp":
-                    cmd = PenUpCommand()
-                elif command == "PenDown":
-                    cmd = PenDownCommand()
-                else:
-                    raise RuntimeError("Unknown Command:" + command)
-                
-                self.graphicsCommands.append(cmd) """
 
     def write(self, filename):
         file = open(filename, "w")
@@ -153,3 +133,5 @@ class DrawAction():
                 file.write('    '+str(key)+",\n")
         file.write('}')
         file.close()
+
+    

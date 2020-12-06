@@ -1,18 +1,18 @@
+from Core.draw import *
+from Core.login import *
+from Core.portada_rc import *
 from Core.controller import *
-import turtle
-import tkinter
-# from Core.view import *
-# from Core.tkinterApp import *
-# from Core.view.login import Ui_Login
-# from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-# from view.login import *
-# from view.portada_rc import *
-# import sys
-
-# from tkinterApp.draw import *
-# from Core.view.login import *
-# from view.portada_rc import *
-# import sys
-controller = Controller()
+if __name__ == "__main__":
+    controller = Controller()
+    app = QtWidgets.QApplication(sys.argv)
+    Login = QtWidgets.QMainWindow()
+    ui = Ui_Login()
+    ui.setupUi(Login)
+    Login.setGeometry(555,180,413,518)
+    username = ui.textLineUser.text()
+    password = ui.textLinePassword.text()
+    ui.buttonLogin.clicked.connect(lambda:controller.authentication(username,password,Login))
+    Login.show()
+    sys.exit(app.exec_())

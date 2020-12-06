@@ -4,9 +4,9 @@ import tkinter.colorchooser
 import tkinter.filedialog
 import xml.dom.minidom
 import json
-from tkinterApp.drawCommands import *
-from tkinterApp.drawActions import *
-from tkinterApp.drawTools import *
+from Core.drawCommands import *
+from Core.drawActions import *
+from Core.drawTools import *
 
 """
 * Clase principal de la aplicacion de dibujo.

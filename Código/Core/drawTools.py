@@ -3,8 +3,8 @@ import tkinter.colorchooser
 import tkinter.filedialog
 import xml.dom.minidom
 import json
-from tkinterApp.drawCommands import *
-from tkinterApp.drawActions import *
+from Core.drawCommands import *
+from Core.drawActions import *
 
 
 class DrawTools():

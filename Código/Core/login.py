@@ -1,7 +1,10 @@
-
+# -*- coding: utf-8 -*-
 from PyQt5 import QtCore, QtGui, QtWidgets
+from Core.controller import Controller
+import sys
 
-class Ui_Login():
+
+class Ui_Login(object):
     def setupUi(self, Login):
         Login.setObjectName("Login")
         Login.setEnabled(True)
@@ -89,6 +92,12 @@ class Ui_Login():
 
         self.retranslateUi(Login)
         QtCore.QMetaObject.connectSlotsByName(Login)
+    #     self.buttonLogin.clicked.connect(lambda:self.loginFunction(self.textLineUser.text(),self.textLinePassword.text()))
+
+    # def loginFunction(self,username,password):
+    #     controller = Controller()
+    #     controller.authentication(username,password)
+        
 
     def retranslateUi(self, Login):
         _translate = QtCore.QCoreApplication.translate
@@ -98,15 +107,4 @@ class Ui_Login():
         self.buttonLogin.setText(_translate("Login", "LOGIN"))
         self.textLinePassword.setPlaceholderText(_translate("Login", "PASSWORD"))
         self.textLineUser.setPlaceholderText(_translate("Login", "USERNAME"))
-
-# import portada_rc
-
-# if __name__ == "__main__":
-#     import sys
-#     app = QtWidgets.QApplication(sys.argv)
-#     Login = QtWidgets.QMainWindow()
-#     ui = Ui_Login()
-#     ui.setupUi(Login)
-#     Login.show()
-#     sys.exit(app.exec_())
 

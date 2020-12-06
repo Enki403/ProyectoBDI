@@ -1,9 +1,16 @@
 # -*- coding: utf-8 -*-
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from Core.configure import *
 
 class Ui_Login(object):
     def setupUi(self, Login):
+        ##############################################
+        self.Configure = QtWidgets.QMainWindow()
+        self.uinel = Ui_Configure()
+        self.uinel.setupUi(self.Configure)
+        #self.Configure.show()
+        ##############################################
         Login.setObjectName("Login")
         Login.setEnabled(True)
         Login.resize(413, 578)

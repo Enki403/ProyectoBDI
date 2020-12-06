@@ -69,14 +69,15 @@ class DrawAction():
     """
     * Abre la ventana de configuracion de la cual solo el usuario administrador puede acceder.
     """
-    def openConfigDialog(self):
-            app = QtWidgets.QApplication(sys.argv)
-            Configure = QtWidgets.QMainWindow()
-            ui = Ui_Configure()
-            ui.setupUi(Configure)
-            Configure.show()
+    def openConfigDialog(self,ui):
+        ui.Configure.show()
+            #app = QtWidgets.QApplication(sys.argv)
+            # Configure = QtWidgets.QMainWindow()
+            # ui = Ui_Configure()
+            # ui.setupUi(Configure)
+            # Configure.show()
             # tkinter._exit()
-            sys.exit(app.exec_())
+            #sys.exit(app.exec_())
 
     
     """

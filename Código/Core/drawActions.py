@@ -5,10 +5,11 @@ import tkinter.filedialog
 import xml.dom.minidom
 import json
 import sys
+from Core.login import *
 from Core.drawCommands import *
-from Core.drawActions import *
 from Core.configure import *
 from Core.portada_rc import *
+
 
 """
 * La clase contiene todas las acciones respecto al dibujo en referencia a la Base de Datos
@@ -62,18 +63,21 @@ class DrawAction():
     * Permite descargar los registros del dibujo actual en la ventana de dibujo, este se guarda en formato JSON.
     """
     def downloadFile(self):
-        print('Descargando dibujo')
+        pass
+        
     
     """
     * Abre la ventana de configuracion de la cual solo el usuario administrador puede acceder.
     """
     def openConfigDialog(self):
-        app = QtWidgets.QApplication(sys.argv)
-        Configure = QtWidgets.QMainWindow()
-        ui = Ui_Configure()
-        ui.setupUi(Configure)
-        Configure.show()
-        sys.exit(app.exec_())
+            app = QtWidgets.QApplication(sys.argv)
+            Configure = QtWidgets.QMainWindow()
+            ui = Ui_Configure()
+            ui.setupUi(Configure)
+            Configure.show()
+            # tkinter._exit()
+            sys.exit(app.exec_())
+
     
     """
     * Realizar un parseo de los registros de un archivo, para convertirtir el dibujo que representa.

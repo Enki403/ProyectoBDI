@@ -121,14 +121,14 @@ class Ui_Configure(object):
         self.labelFilColor.setText(_translate("Configure", "#0000000"))
         self.buttonReturn.setText(_translate("Configure", "RETURN"))
 
-# import portada_rc
+import portada_rc
 
-# if __name__ == "__main__":
-#     import sys
-#     app = QtWidgets.QApplication(sys.argv)
-#     Configure = QtWidgets.QMainWindow()
-#     ui = Ui_Configure()
-#     ui.setupUi(Configure)
-#     Configure.show()
-#     sys.exit(app.exec_())
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    Configure = QtWidgets.QMainWindow()
+    ui = Ui_Configure()
+    ui.setupUi(Configure)
+    Configure.show()
+    sys.exit(app.exec_())
 

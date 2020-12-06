@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 
+# Form implementation generated from reading ui file 'LoginWindow.ui'
+#
+# Created by: PyQt5 UI code generator 5.11.3
+#
+# WARNING! All changes made in this file will be lost!
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_Login(object):
@@ -99,4 +105,15 @@ class Ui_Login(object):
         self.buttonLogin.setText(_translate("Login", "LOGIN"))
         self.textLinePassword.setPlaceholderText(_translate("Login", "PASSWORD"))
         self.textLineUser.setPlaceholderText(_translate("Login", "USERNAME"))
+
+import portada_rc
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    Login = QtWidgets.QMainWindow()
+    ui = Ui_Login()
+    ui.setupUi(Login)
+    Login.show()
+    sys.exit(app.exec_())
 

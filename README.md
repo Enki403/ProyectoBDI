@@ -13,7 +13,7 @@ Definicion de Proyecto
   * El manejo de archivos BLOB debe ser mediante archivos “.json”.  
   * Los datos de “Pen Color” y “Fill Color” deben tener valores de configuración en la base de datos, modificables por el administrador.  
   * El administrador debe poder ser capaz de crear usuarios operadores. Un usuario operador puede crear dibujos y visualizar únicamente los dibujos creados por él mismo. Un usuario administrador puede crear y visualizar dibujos, y gestionar (crear, modificar nombre y contraseña, y eliminar) usuarios.  
-  a bitácora deberá guardar todas las acciones del usuario, incluyendo, autenticación, visualización, creación, modificación, eliminación de dibujos, configuraciones (colores) y usuarios.  
+  * La bitácora deberá guardar todas las acciones del usuario, incluyendo, autenticación, visualización, creación, modificación, eliminación de dibujos, configuraciones (colores) y usuarios.  
   * El estudiante debe seguir las indicaciones del libro para implementar el código del programa ya existente de generación de dibujos.  
     * El menú “File->New” debe crear una nueva imagen dentro del repositorio de dibujos del usuario autenticado.  
     * El menú “File->Load” debe permitir al usuario elegir un dibujo desde la base de datos, limitándose a mostrar únicamente los dibujos de este usuario. El listado de dibujos debe aparecer mediante nueva ventana, y al seleccionar un dibujo y presionar aceptar, ese dibujo se debe cargar en la pantalla de dibujo. Si el sistema no tiene dibujos de este usuario, el programa debe estar preparado para no fallar con error.  

@@ -56,7 +56,7 @@ class DrawingApplication(tkinter.Frame):
         self.fileMenu.add_command(label="Download",command=self.action.downloadFile)
         if(self.admin):
             self.fileMenu.add_command(label="Configuration",command=self.action.openConfigDialog)
-        # self.fileMenu.add_command(label="Exit",command=self.master.quit)
+        self.fileMenu.add_command(label="Exit",command=self.master.quit)
     
     """
     * Construye los componentes de las herramientas de dibujo en la ventana.

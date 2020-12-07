@@ -1,11 +1,10 @@
 from Core.draw import *
-# import mysql.connector
+from Core.dbConfig import *
+import sys
 
 class ConnectDB:
     def __init__(self):
-        # self.cnx = mysql.connector.connect(user='admin',password='admin',host='192.168.0.13',database='testUser')
-        # print(self.cnx)
-        pass
+       db = DBConfig()
 
     def validateLogin(self,username,password,Login):
         if(self.isUser(username,password)):
@@ -15,9 +14,16 @@ class ConnectDB:
             drawingApp = DrawingApplication(root,admin)
             drawingApp.mainloop()
             print("Program Execution Completed.")
+            sys.exit(0)
 
     def isUser(self,username,password):
-        return True
+        stade = True
+        # self.mycursor.execute('SELECT * FROM User')
+            # for x in self.mycursor
+        #     if (username ==x[1] and password ==[2] ):
+        #         stade = True
+        #     else: stade = False
+        return stade
 
     def isAdmin(self,username,password):
         return True

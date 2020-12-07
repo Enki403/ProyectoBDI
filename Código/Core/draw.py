@@ -12,7 +12,8 @@ from Core.drawTools import *
 * Clase principal de la aplicacion de dibujo.
 """
 class DrawingApplication(tkinter.Frame):
-    def __init__(self,master=None):
+    def __init__(self,master=None,admin=False):
+        self.admin = admin
         super().__init__(master)
         self.tkinter = tkinter
         self.turtle = turtle
@@ -53,7 +54,8 @@ class DrawingApplication(tkinter.Frame):
         self.fileMenu.add_command(label="Load",command=self.action.loadFile)
         self.fileMenu.add_command(label="Save As",command=self.action.saveFile)
         self.fileMenu.add_command(label="Download",command=self.action.downloadFile)
-        self.fileMenu.add_command(label="Configuration",command=self.action.openConfigDialog)
+        if(self.admin):
+            self.fileMenu.add_command(label="Configuration",command=self.action.openConfigDialog)
         # self.fileMenu.add_command(label="Exit",command=self.master.quit)
     
     """

@@ -34,7 +34,7 @@ class Config:
         self.message = Label(frame,text = '', fg = 'green')
         self.message.grid(row = 5, column = 0, columnspan = 2, sticky = W + E)
 
-        # Table
+        # Creando la tabla en donde se visualizaran los usuarios
         self.tree = ttk.Treeview(frame, height=10, columns=[f"#{n}" for n in range(1, 7)])
         self.tree.config(show='headings')
         self.tree.grid(row = 7, column = 0, columnspan = 2)

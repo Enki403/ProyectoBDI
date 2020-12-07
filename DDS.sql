@@ -119,7 +119,7 @@ END$$
 
 /**
  * !SP modifyUserName
- * * Modifica el nombre de un usuario de OLD_NOMBRE a NOMBRE
+ * * Modifica el nombre de un usuario de OLD_NOMBRE a NOMBRE exceptuando al administrador
  * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
  * @date 6/12/2020
  * @version 1
@@ -151,7 +151,7 @@ END$$
 
 /**
  * !SP modifyUserPass
- * * Modifica el nombre de un usuario de OLD_NOMBRE a NOMBRE
+ * * Modifica la contraseña por PASS del usuario NOMBRE exceptuando al administrador
  * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
  * @date 6/12/2020
  * @version 1
@@ -185,7 +185,7 @@ END$$
 
 /**
  * !SP getLogbook
- * * Obtiene el nombre de todos los usuarios exceptuando del administrador
+ * * Obtiene el los datos de la bitacora
  * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
  * @date 6/12/2020
  * @version 1
@@ -193,16 +193,6 @@ END$$
 DROP PROCEDURE IF EXISTS getLogbook$$
 CREATE PROCEDURE getLogbook()
 BEGIN
-    -- * Maneja el error de modo que retorne un json eg. { errno: 1062, msg: Duplicate entry} si existe algun problema.
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        GET DIAGNOSTICS CONDITION 1 
-            @sqlState = RETURNED_SQLSTATE, 
-            @errno = MYSQL_ERRNO, 
-            @msgText = MESSAGE_TEXT;
-        SET @full_error = CONCAT("{ errno: ",@errno,", msg: ",@msgText,"}");
-        SELECT @full_error AS "ERROR";
-    END;
     -- * Obtiene todos los resultados de 
     SELECT Logbook.id AS "id", 
            AES_DECRYPT(User.blo_name, @key) AS "User Name",

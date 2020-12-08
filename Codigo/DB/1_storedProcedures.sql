@@ -1,10 +1,8 @@
 /**
  * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
- * @date 5/12/2020
+ * @date 7/12/2020
 */
 
-DROP DATABASE IF EXISTS DrawingApp;
-CREATE DATABASE DrawingApp CHARACTER SET utf8;
 USE DrawingApp;
 
 --* Procedimientos Almacenados
@@ -20,8 +18,8 @@ SET @key = "admin";
  * @date 5/12/2020
  * @version 1
  */
-DROP PROCEDURE IF EXISTS initialize$$
-CREATE PROCEDURE initialize()
+DROP PROCEDURE IF EXISTS sp_initialize$$
+CREATE PROCEDURE sp_initialize()
 BEGIN
     -- *Insertar usuario administrador
     INSERT INTO User(bit_admin, blo_name, blo_password) VALUES (1, AES_ENCRYPT("admin", @key), AES_ENCRYPT("admin", @key));
@@ -35,14 +33,14 @@ BEGIN
 END$$
 
 /**
- * !SP registerUser
+ * !SP createUser
  * * Registra a un usuario, necesita como parametro nombre y contraseña
  * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
  * @date 5/12/2020
  * @version 1
  */
-DROP PROCEDURE IF EXISTS registerUser$$
-CREATE PROCEDURE registerUser(
+DROP PROCEDURE IF EXISTS sp_createUser$$
+CREATE PROCEDURE sp_createUser(
     IN NOMBRE TEXT, 
     IN PASS TEXT)
 BEGIN
@@ -70,8 +68,8 @@ END$$
  * @date 6/12/2020
  * @version 1
  */
-DROP PROCEDURE IF EXISTS deleteUser$$
-CREATE PROCEDURE deleteUser(
+DROP PROCEDURE IF EXISTS sp_deleteUser$$
+CREATE PROCEDURE sp_deleteUser(
     IN NOMBRE TEXT)
 BEGIN
     -- * Maneja el error de modo que retorne un json eg. { errno: 1062, msg: Duplicate entry} si existe algun problema.
@@ -100,8 +98,8 @@ END$$
  * @date 6/12/2020
  * @version 1
  */
-DROP PROCEDURE IF EXISTS getUsers$$
-CREATE PROCEDURE getUsers()
+DROP PROCEDURE IF EXISTS sp_getUsers$$
+CREATE PROCEDURE sp_getUsers()
 BEGIN
     -- * Maneja el error de modo que retorne un json eg. { errno: 1062, msg: Duplicate entry} si existe algun problema.
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -124,8 +122,8 @@ END$$
  * @date 6/12/2020
  * @version 1
  */
-DROP PROCEDURE IF EXISTS modifyUserName$$
-CREATE PROCEDURE modifyUserName(
+DROP PROCEDURE IF EXISTS sp_modifyUserName$$
+CREATE PROCEDURE sp_modifyUserName(
     IN OLD_NOMBRE TEXT,
     IN NOMBRE TEXT)
 BEGIN
@@ -156,8 +154,8 @@ END$$
  * @date 6/12/2020
  * @version 1
  */
-DROP PROCEDURE IF EXISTS modifyUserPass$$
-CREATE PROCEDURE modifyUserPass(
+DROP PROCEDURE IF EXISTS sp_modifyUserPass$$
+CREATE PROCEDURE sp_modifyUserPass(
     IN NOMBRE TEXT,
     IN PASS TEXT)
 BEGIN
@@ -178,7 +176,7 @@ BEGIN
                 blo_modificationDate = AES_ENCRYPT(NOW(), @key)
             WHERE blo_name = AES_ENCRYPT(NOMBRE, @key);
         IF ROW_COUNT() = 1 THEN
-            INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (1, 4, CONVERT(CONCAT("User's ('", NOMBRE, "') password has been updated.") USING UTF8)); 
+            INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (1, 4, CONCAT("User's ('", NOMBRE, "') password has been updated.")); 
         END IF;
     END IF;
 END$$
@@ -190,10 +188,10 @@ END$$
  * @date 6/12/2020
  * @version 1
  */
-DROP PROCEDURE IF EXISTS getLogbook$$
-CREATE PROCEDURE getLogbook()
+DROP PROCEDURE IF EXISTS sp_getLogbook$$
+CREATE PROCEDURE sp_getLogbook()
 BEGIN
-    -- * Obtiene todos los resultados de 
+    -- * Obtiene todos los resultados de  la bitacora
     SELECT Logbook.id AS "id", 
            AES_DECRYPT(User.blo_name, @key) AS "User Name",
            Activity.var_name AS "Action", 
@@ -202,16 +200,53 @@ BEGIN
     FROM Logbook, User, Activity
     WHERE Logbook.id_user = User.id AND Logbook.id_activity = Activity.id;
 END$$
+/**
+ * !SP getConfig
+ * * Obtiene el los datos de la configuracion de pen color y fill color
+ * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
+ * @date 7/12/2020
+ * @version 1
+ */
+DROP PROCEDURE IF EXISTS sp_getConfig$$
+CREATE PROCEDURE sp_getConfig()
+BEGIN
+    -- * Obtiene los registros de configuracion
+    SELECT AES_DECRYPT(blo_penColorValue, @key) AS "Pen Color Value", 
+           AES_DECRYPT(blo_fillColorValue, @key) AS "Fill Color Value"
+    FROM Config;
+    INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (1, 2, CONCAT("Pen Color and Fill Color has been seen.")); 
+END$$
+/**
+ * !SP setConfig
+ * * Cambia los datos de ppen color y fill color
+ * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
+ * @date 7/12/2020
+ * @version 1
+ */
+DROP PROCEDURE IF EXISTS sp_setConfig$$
+CREATE PROCEDURE sp_setConfig(
+    IN PEN VARCHAR(7),
+    IN FILL VARCHAR(7))
+BEGIN
+    -- * modifica los registros de configuracion
+    UPDATE Config 
+            SET blo_penColorValue = AES_ENCRYPT(PEN, @key),
+                blo_fillColorValue = AES_ENCRYPT(FILL, @key)
+            WHERE id = 1;
+    IF ROW_COUNT() = 1 THEN
+        INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (1, 4, CONCAT("Congiguration values has been updated.")); 
+    END IF;
+END$$
 
 /**
- * !SP authLog
+ * !SP userAuthenticated
  * * Obtiene el nombre de todos los usuarios
  * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
  * @date 6/12/2020
  * @version 1
  */
- DROP PROCEDURE IF EXISTS authLog$$
-CREATE PROCEDURE authLog(
+ DROP PROCEDURE IF EXISTS sp_userAuthenticated$$
+CREATE PROCEDURE sp_userAuthenticated(
     IN NOMBRE TEXT)
 BEGIN
     -- * Maneja el error de modo que retorne un json eg. { errno: 1062, msg: Duplicate entry} si existe algun problema.
@@ -228,58 +263,36 @@ BEGIN
     INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (1, 1, CONCAT("User ('", NOMBRE, "') has been authenticated."));
 END$$
 
+/**
+ * !SP createDrawing
+ * * Crea un dibujo en la base de datos. USERID representa el id del usuario que guarda, NOMBRE representa el nombre del dibujo, DRAWDATA representa el json
+ * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
+ * @date 5/12/2020
+ * @version 1
+ */
+DROP PROCEDURE IF EXISTS sp_createDrawing$$
+CREATE PROCEDURE sp_createDrawing(
+    IN USERID TEXT, 
+    IN NOMBRE TEXT, 
+    IN DRAWDATA TEXT)
+BEGIN
+    -- * Maneja el error de modo que retorne un json eg. { errno: 1062, msg: Duplicate entry} si existe algun problema.
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1 
+            @sqlState = RETURNED_SQLSTATE, 
+            @errno = MYSQL_ERRNO, 
+            @msgText = MESSAGE_TEXT;
+        SET @full_error = CONCAT("{ errno: ",@errno,", msg: ",SUBSTRING(@msgText,1,15) ,"}");
+        SELECT @full_error AS "ERROR";
+    END;
+
+    -- * Inserta dibujo a la base de datos
+    INSERT INTO Drawing(id_user, blo_name, blo_blob) VALUES 
+        (USERID, AES_ENCRYPT(NOMBRE, @key), AES_ENCRYPT(DRAWDATA, @key));
+    IF ROW_COUNT() = 1 THEN
+        INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (USERID, 3, CONCAT("Drawing '", NOMBRE, "' has been created."));
+    END IF;
+END$$
+
 DELIMITER ;
-
---* Creacion de tablas
-
-DROP TABLE IF EXISTS Config;
-CREATE TABLE Config(
-    id INT AUTO_INCREMENT PRIMARY KEY COMMENT "Identificador unico de la configuracion inicial",
-    blo_penColorValue BLOB NOT NULL COMMENT "Valor inicial de pen color.",
-    blo_fillColorValue BLOB NOT NULL COMMENT "Valor inicial de fill color."
-) COMMENT "Tabla de configuracion inicial";
-
-DROP TABLE IF EXISTS User;
-CREATE TABLE User(
-    id INT AUTO_INCREMENT PRIMARY KEY COMMENT "Identificador unico de User.",
-    bit_admin BIT NOT NULL DEFAULT 0 COMMENT "Si es administrador es 1, de lo contrario 0.",
-    blo_name BLOB NOT NULL UNIQUE COMMENT "Nombre del usuario.",
-    blo_password BLOB NOT NULL COMMENT "Contraseña del usuario.",
-    blo_creationDate BLOB NOT NULL DEFAULT AES_ENCRYPT(NOW(), "admin") COMMENT "Fecha en la que el usuario fue creado.",
-    blo_modificationDate BLOB NOT NULL DEFAULT AES_ENCRYPT(NOW(), "admin") COMMENT "Fecha en la que el usuario fue modificado."
-) COMMENT "Tabla de usuarios";
-
-DROP TABLE IF EXISTS Drawing;
-CREATE TABLE Drawing(
-    id INT AUTO_INCREMENT PRIMARY KEY COMMENT "Identificador unico del.",
-    id_user INT NOT NULL COMMENT "LLave foranea que hace referencia a un usuario.",
-    blo_name BLOB NOT NULL UNIQUE COMMENT "Nombre del dibujo.",
-    blo_blob BLOB NOT NULL COMMENT "Contiene el dibujo",
-    blo_creationDate BLOB NOT NULL DEFAULT AES_ENCRYPT(NOW(), "admin") COMMENT "Fecha en la que el dibujo fue creado.",
-    blo_modificationDate BLOB NOT NULL DEFAULT AES_ENCRYPT(NOW(), "admin") COMMENT "Fecha en la que el dibujo fue modificado.",
-    FOREIGN KEY ( id_user ) REFERENCES User(id)
-        ON DELETE CASCADE ON UPDATE CASCADE
-) COMMENT "Tabla de dibujos";
-
-DROP TABLE IF EXISTS Activity;
-CREATE TABLE Activity(
-    id INT AUTO_INCREMENT PRIMARY KEY COMMENT "Identificador unico de una actividad.",
-    var_name VARCHAR(13) NOT NULL COMMENT "Nombre de la actividad."
-) COMMENT "Tabla de actividades Puede ser autentication, visualization, creation, modification o elimination.";
-
-DROP TABLE IF EXISTS Logbook;
-CREATE TABLE Logbook(
-    id INT AUTO_INCREMENT PRIMARY KEY COMMENT "Identificador unico de Logbook.",
-    id_user INT NOT NULL COMMENT "LLave foranea que hace referencia a un usuario.",
-    id_activity INT NOT NULL COMMENT "LLave foranea que hace referencia a una actividad.",
-    tex_description TEXT NOT NULL COMMENT "Descripcion de lo que el usaurio ha realizado.",
-    dat_creationDate DATETIME NOT NULL DEFAULT NOW() COMMENT "Fecha en la que el usuario realizo la accion.",
-    FOREIGN KEY ( id_user ) REFERENCES User(id)
-        ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY ( id_activity ) REFERENCES Activity(id)
-        ON DELETE CASCADE ON UPDATE CASCADE
-) COMMENT "Tabla de bitacora";
-
-
---* Inicializacion de base de datos
-CALL initialize();

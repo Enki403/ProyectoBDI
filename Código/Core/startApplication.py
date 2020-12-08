@@ -1,9 +1,10 @@
 from Core.draw import *
+import configparser
 import sys
 
-class ConnectDB:
+class StartApplication:
     def __init__(self):
-        pass
+        config = configparser.ConfigParser()
 
     def validateLogin(self,username,password,Login):
         if(True):

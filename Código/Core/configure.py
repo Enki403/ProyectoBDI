@@ -1,5 +1,6 @@
 from tkinter import ttk
 from tkinter import *
+import configparser
 import mysql.connector
 
 class Config:

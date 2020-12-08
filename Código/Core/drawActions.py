@@ -6,7 +6,7 @@ import xml.dom.minidom
 import json
 from Core.drawCommands import *
 from Core.drawActions import *
-from Core.config import *
+from Core.configure import *
 
 """
 * La clase contiene todas las acciones respecto al dibujo en referencia a la Base de Datos

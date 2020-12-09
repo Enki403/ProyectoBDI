@@ -267,7 +267,7 @@ END$$
  * !SP createDrawing
  * * Crea un dibujo en la base de datos. USERID representa el id del usuario que guarda, NOMBRE representa el nombre del dibujo, DRAWDATA representa el json
  * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
- * @date 5/12/2020
+ * @date 7/12/2020
  * @version 1
  */
 DROP PROCEDURE IF EXISTS sp_createDrawing$$
@@ -291,8 +291,121 @@ BEGIN
     INSERT INTO Drawing(id_user, blo_name, blo_blob) VALUES 
         (USERID, AES_ENCRYPT(NOMBRE, @key), AES_ENCRYPT(DRAWDATA, @key));
     IF ROW_COUNT() = 1 THEN
-        INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (USERID, 3, CONCAT("Drawing '", NOMBRE, "' has been created."));
+        INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (USERID, 3, CONCAT("Drawing '", NOMBRE, "' has been created by ", (SELECT AES_DECRYPT(User.blo_name, @key) FROM User WHERE User.id = USERID),"."));
     END IF;
 END$$
+
+/**
+ * !SP deleteDrawing
+ * * Elimina un dibujo en la base de datos. NOMBRE representa el nombre del dibujo
+ * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
+ * @date 8/12/2020
+ * @version 1
+ */
+DROP PROCEDURE IF EXISTS sp_deleteDrawing$$
+CREATE PROCEDURE sp_deleteDrawing(
+    IN USERID TEXT,
+    IN NOMBRE TEXT)
+BEGIN
+    -- * Maneja el error de modo que retorne un json eg. { errno: 1062, msg: Duplicate entry} si existe algun problema.
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1 
+            @sqlState = RETURNED_SQLSTATE, 
+            @errno = MYSQL_ERRNO, 
+            @msgText = MESSAGE_TEXT;
+        SET @full_error = CONCAT("{ errno: ",@errno,", msg: ",@msgText,"}");
+        SELECT @full_error AS "ERROR";
+    END;
+
+    -- * Elimina dibujo a la base de datos
+    DELETE FROM Drawing WHERE AES_DECRYPT(blo_name, @key) = NOMBRE;
+    IF ROW_COUNT() = 1 THEN
+        INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (1, 5, CONCAT("Drawing '", NOMBRE, "' has been deleted by ", (SELECT AES_DECRYPT(User.blo_name, @key) FROM User WHERE User.id = USERID),"."));
+    END IF;
+END$$
+
+/**
+ * !SP getDrawings
+ * * Obtiene el nombre de todos los dibujos
+ * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
+ * @date 8/12/2020
+ * @version 1
+ */
+DROP PROCEDURE IF EXISTS sp_getDrawings$$
+CREATE PROCEDURE sp_getDrawings()
+BEGIN
+    -- * Maneja el error de modo que retorne un json eg. { errno: 1062, msg: Duplicate entry} si existe algun problema.
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1 
+            @sqlState = RETURNED_SQLSTATE, 
+            @errno = MYSQL_ERRNO, 
+            @msgText = MESSAGE_TEXT;
+        SET @full_error = CONCAT("{ errno: ",@errno,", msg: ",@msgText,"}");
+        SELECT @full_error AS "ERROR";
+    END;
+    -- * Obtiene todos los dibujos
+    SELECT Drawing.id AS "id", AES_DECRYPT(User.blo_name, @key) AS "User", AES_DECRYPT(Drawing.blo_name, @key) AS "Name"  FROM Drawing, User WHERE Drawing.id_user = User.id;
+END$$
+
+/**
+ * !SP getDrawingsByUser
+ * * Obtiene el nombre de todos los dibujos de un usuario en especifico
+ * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
+ * @date 8/12/2020
+ * @version 1
+ */
+DROP PROCEDURE IF EXISTS sp_getDrawingsByUser$$
+CREATE PROCEDURE sp_getDrawingsByUser(
+    IN USERID TEXT
+)
+BEGIN
+    -- * Maneja el error de modo que retorne un json eg. { errno: 1062, msg: Duplicate entry} si existe algun problema.
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1 
+            @sqlState = RETURNED_SQLSTATE, 
+            @errno = MYSQL_ERRNO, 
+            @msgText = MESSAGE_TEXT;
+        SET @full_error = CONCAT("{ errno: ",@errno,", msg: ",@msgText,"}");
+        SELECT @full_error AS "ERROR";
+    END;
+    -- * Obtiene todos los dibujos
+    SELECT Drawing.id AS "id", AES_DECRYPT(User.blo_name, @key) AS "User", AES_DECRYPT(Drawing.blo_name, @key) AS "Name"  FROM Drawing, User WHERE USERID = User.id;
+END$$
+
+/**
+ * !SP getSketch
+ * * Obtiene el nombre de todos los dibujos de un usuario en especifico
+ * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
+ * @date 8/12/2020
+ * @version 1
+ */
+DROP PROCEDURE IF EXISTS sp_getSketch$$
+CREATE PROCEDURE sp_getSketch(
+    IN USERID TEXT,
+    IN NOMBRE TEXT)
+BEGIN
+    -- * Maneja el error de modo que retorne un json eg. { errno: 1062, msg: Duplicate entry} si existe algun problema.
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1 
+            @sqlState = RETURNED_SQLSTATE, 
+            @errno = MYSQL_ERRNO, 
+            @msgText = MESSAGE_TEXT;
+        SET @full_error = CONCAT("{ errno: ",@errno,", msg: ",@msgText,"}");
+        SELECT @full_error AS "ERROR";
+    END;
+    IF (SELECT count(*) FROM Drawing WHERE id_user = USERID)>0 THEN
+        -- * Obtiene todos los dibujos
+        SELECT id AS "id", AES_DECRYPT(blo_name, @key) AS "Name", AES_DECRYPT(blo_blob, @key) AS "Drawing Data" FROM Drawing WHERE blo_name = AES_ENCRYPT(NOMBRE, @key);
+    ELSE
+        SELECT CONCAT('{ "errno": 3, "msg": "This user has no drawings yet."}') AS "ERROR";
+    END IF;
+END$$
+
+
+-- * SELECT id, id_user, AES_DECRYPT(blo_name, "admin") as "blo_name", AES_DECRYPT(blo_blob, "admin") as "blo_blob",AES_DECRYPT(blo_creationDate, "admin") as "blo_creationDate", AES_DECRYPT(blo_modificationDate, "admin") as "blo_modifcationDate" FROM Drawing;
 
 DELIMITER ;

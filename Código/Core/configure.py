@@ -1,11 +1,13 @@
 from tkinter import ttk
 from tkinter import *
+from Core.connection import *
 import configparser
 import mysql.connector
 
 class Config:
-    def __init__(self,window):
-        # Incicializando la ventana
+    def __init__(self,window,credentials):
+        self.credentials = credentials
+        self.cnx = ConnectionDB(self.credentials)
         self.wind = window
         self.wind.title('')
 
@@ -19,15 +21,10 @@ class Config:
         self.name.focus()
         self.name.grid(row = 1, column = 1,columnspan= 2,sticky= W + E)
 
-        # UserName Input
-        Label(frame, text = 'Username: ').grid(row = 2, column = 0)
-        self.user = Entry(frame)
-        self.user.grid(row = 2, column = 1, sticky= W + E)
-
         # PassWord Input
-        Label(frame, text = 'Password: ').grid(row = 3, column = 0)
+        Label(frame, text = 'Password: ').grid(row = 2, column = 0)
         self.password = Entry(frame)
-        self.password.grid(row = 3, column = 1, sticky= W + E)
+        self.password.grid(row = 2, column = 1, sticky= W + E)
 
         # Button Create 
         ttk.Button(frame, text = 'CREATE',command = self.createUser).grid(row = 4, columnspan =3,column=1,sticky=W+E)
@@ -37,15 +34,14 @@ class Config:
         self.message.grid(row = 5, column = 1, columnspan = 3, sticky = W+E)
 
         # Creando la tabla en donde se visualizaran los usuarios
-        self.tree = ttk.Treeview(frame, height=10, columns=[f"#{n}" for n in range(1, 7)])
+        self.tree = ttk.Treeview(frame, height=10, columns=[f"#{n}" for n in range(1, 6)])
         self.tree.config(show='headings')
         self.tree.grid(row = 7, column = 0, columnspan = 2)
         self.tree.heading('#1', text='id', anchor=CENTER)
         self.tree.heading('#2', text='Name', anchor=CENTER)
-        self.tree.heading('#3', text='User Name', anchor=CENTER)
-        self.tree.heading('#4', text='Password', anchor=CENTER)
-        self.tree.heading('#5', text='Creation Date', anchor=CENTER)
-        self.tree.heading('#6', text='Modification Date', anchor=CENTER)
+        self.tree.heading('#3', text='Password', anchor=CENTER)
+        self.tree.heading('#4', text='Creation Date', anchor=CENTER)
+        self.tree.heading('#5', text='Modification Date', anchor=CENTER)
 
         #Button Delete
         ttk.Button(frame,text = 'DELETE' ,command = self.deleteUser).grid(row = 9, column = 0, sticky = W + E)
@@ -64,36 +60,6 @@ class Config:
 
         self.getUsers()
 
-    #Metodo para guardar todos los datos de la DB en un array de tuplas
-    def executeQueryRead(self, query, parameters = ()):
-        valuesReturn = []
-        config = {
-        'user': 'admin',
-        'password': 'admin',
-        'host': '192.168.0.13',
-        'database': 'testUser'
-        }
-        cnx = mysql.connector.connect(**config)
-        cursor = cnx.cursor()
-        cursor.execute(query,parameters)
-        for x in cursor:
-            valuesReturn.append(x)
-        cnx.close()
-        return valuesReturn
-
-    # Este metodo se encarga de crear y eliminar usuarios
-    def executeQueryWrite(self,query,parameters = ()):
-        config = {
-            'user': 'admin',
-            'password': 'admin',
-            'host': '192.168.0.13',
-            'database': 'testUser'
-            }
-        cnx = mysql.connector.connect(**config)
-        cursor = cnx.cursor()
-        cursor.execute(query,parameters)
-        cnx.commit()
-        cnx.close()
 
     #Este metodo muestra los valores de la DB en la tabla de configuracion
     def getUsers(self):
@@ -102,25 +68,24 @@ class Config:
         for element in records:
             self.tree.delete(element)
         query = 'SELECT * FROM User ORDER BY id DESC'
-        rows = self.executeQueryRead(query)
+        rows = self.cnx.executeQueryRead(query)
         #Rellenando la fila
         for row in rows:
             self.tree.insert('',0,text= row[1],values=row)
         
     #Verificar si se estan recibiendo datos
     def validateValue(self):
-        return (len(self.name.get()) != 0 and (self.user.get()) != 0 and (self.password.get()) != 0)
+        return (len(self.name.get()) != 0 and (self.password.get()) != 0)
 
     # Creando usuarios
     def createUser(self):
         if self.validateValue():
-            query = 'INSERT INTO User (name,username,password) VALUES (%s,%s,%s)'
-            parameters =(self.name.get(),self.user.get(),self.password.get())
-            self.executeQueryWrite(query,parameters)
+            query = 'INSERT INTO User (name,password) VALUES (%s,%s)'
+            parameters =(self.name.get(),self.password.get())
+            self.cnx.executeQueryWrite(query,parameters)
             self.message['fg'] = 'green'
             self.message['text'] = 'User Created Successfully!!!'
             self.name.delete(0,END)
-            self.user.delete(0,END)
             self.password.delete(0,END)
         else:
             self.message['fg'] = 'red'
@@ -140,7 +105,7 @@ class Config:
         query = 'DELETE FROM User WHERE name = %s'
         name = (self.tree.item(self.tree.selection())['text'],)
         
-        self.executeQueryWrite(query,name)
+        self.cnx.executeQueryWrite(query,name)
 
         self.message['text'] = 'Deleted User!!'
         self.getUsers()
@@ -183,7 +148,7 @@ class Config:
         self.editWind = Toplevel()
         self.editWind.title = 'Update User'
 
-        oldPassword = self.tree.item(self.tree.selection())['values'][3]
+        oldPassword = self.tree.item(self.tree.selection())['values'][2]
         id = self.tree.item(self.tree.selection())['values'][0]
         Label(self.editWind, text = 'Old Password:').grid(row = 3, column = 1)
         Entry(self.editWind, textvariable = StringVar(self.editWind, value = oldPassword), state = 'readonly').grid(row = 3, column = 2)
@@ -201,12 +166,15 @@ class Config:
         if(value == 'password'):
             query = 'UPDATE User SET password = %s WHERE id = %s '
             parameters = (new,id)
-            self.executeQueryWrite(query, parameters)
+            self.cnx.executeQueryWrite(query, parameters)
         else:
             query = 'UPDATE User SET name = %s WHERE id = %s '
             parameters = (new,id)
-            self.executeQueryWrite(query, parameters)
+            self.cnx.executeQueryWrite(query, parameters)
 
         self.editWind.destroy()
         self.message['text'] = 'Registry Updated successfylly'
         self.getUsers()
+
+    def penColorAction(self):
+        pass

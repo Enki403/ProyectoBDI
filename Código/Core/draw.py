@@ -12,8 +12,9 @@ from Core.drawTools import *
 * Clase principal de la aplicacion de dibujo.
 """
 class DrawingApplication(tkinter.Frame):
-    def __init__(self,master=None,admin=False):
+    def __init__(self,credentials,master=None,admin=False):
         self.admin = admin
+        self.credentials = credentials
         super().__init__(master)
         self.tkinter = tkinter
         self.turtle = turtle
@@ -55,7 +56,8 @@ class DrawingApplication(tkinter.Frame):
         self.fileMenu.add_command(label="Save As",command=self.action.saveFile)
         self.fileMenu.add_command(label="Download",command=self.action.downloadFile)
         if(self.admin):
-            self.fileMenu.add_command(label="Configuration",command=self.action.openConfigDialog)
+            # self.fileMenu.add_command(label="Configuration",command=self.action.openConfigDialog)
+            self.fileMenu.add_command(label="Configuration",command=self.configMenu)
         self.fileMenu.add_command(label="Exit",command=self.master.quit)
     
     """
@@ -140,3 +142,10 @@ class DrawingApplication(tkinter.Frame):
     """
     def getApp(self):
         return self
+
+    """
+    * Permite mostrar el menu de configuracion al usuario administrador
+    """
+    def configMenu(self):
+        tl = Toplevel()
+        conf = Config(tl,self.credentials)

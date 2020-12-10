@@ -15,7 +15,6 @@ class DrawTools():
         app = self.app.getApp() 
         app.screen.update()
         app.screen.listen()
-
         cmd = CircleCommand(float (app.radiusSize.get()), float(app.widthSize.get()), app.penColor.get())
         cmd.draw(app.theTurtle)
         app.graphicsCommands.append(cmd)

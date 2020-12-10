@@ -31,3 +31,6 @@ ui.buttonLogin.clicked.connect(
 )
 Login.show()
 sys.exit(app.exec_())
+
+
+prin('hola')

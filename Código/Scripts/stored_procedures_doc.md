@@ -1,0 +1,65 @@
+Stored Procedures
+======
+
+- **sp_initialize()** :  
+  - __**Descripcion**__: 'Inicializa' la base de datos con los valores iniciales correspondientes.  
+  - __**Parametros**__: N/A  
+  - __**Resultado**__: N/A  
+- **sp_createUser(nombre, pass)** :  
+  - __**Descripcion**__: Registra a un usuario, necesita como parametro nombre y contraseña. Si el nombre de usuario se encuentra registrado entonces retorna un json con dicho aviso.  
+  - __**Parametros**__:  
+    - NOMBRE: Es el nombre de del nuevo usuario.  
+    - PASS: Es la contraseña del nuevo usuario.  
+  - __**Resultado**__: N/A  
+- **sp_deleteUser(nombre)** :  
+  - __**Descripcion**__: Elimina al usuario de la base de datos, excepto al administrador.  
+  - __**Parametros**__: NOMBRE  
+  - __**Resultado**__: N/A  
+- **sp_getUsers()** :  
+  - __**Descripcion**__:  Obtiene el nombre de todos los usuarios exceptuando del administrador.
+  - __**Parametros**__: N/A  
+  - __**Resultado**__: N/A  
+- **sp_modifyUserName(old_nombre, nombre)** :  
+  - __**Descripcion**__: Modifica el nombre de un usuario de OLD_NOMBRE a NOMBRE exceptuando al administrador.  
+  - __**Parametros**__: N/A  
+  - __**Resultado**__: N/A  
+- **sp_modifyUserPass(nombre, new_pass)** :  
+  - __**Descripcion**__:  
+  - __**Parametros**__:  
+  - __**Resultado**__:  
+- **sp_getLogbook()** :  
+  - __**Descripcion**__:  
+  - __**Parametros**__:  
+  - __**Resultado**__:  
+- **sp_getConfig()** :  
+  - __**Descripcion**__:  
+  - __**Parametros**__:  
+  - __**Resultado**__:  
+- **sp_setConfig(pencolor, fillcolor)** :  
+  - __**Descripcion**__:  
+  - __**Parametros**__:  
+  - __**Resultado**__:  
+- **sp_userAuthenticated(nombre)** :  
+  - __**Descripcion**__:  
+  - __**Parametros**__:  
+  - __**Resultado**__:  
+- **sp_createDrawing(userid, nombre, drawdat*a)* :  
+  - __**Descripcion**__:  
+  - __**Parametros**__:  
+  - __**Resultado**__:  
+- **sp_deleteDrawing(userid, nombre)** :  
+  - __**Descripcion**__:  
+  - __**Parametros**__:  
+  - __**Resultado**__:  
+- **sp_getDrawings()** :  
+  - __**Descripcion**__:  
+  - __**Parametros**__:  
+  - __**Resultado**__:  
+- **sp_getDrawingByUser(userid)** :  
+  - __**Descripcion**__:  
+  - __**Parametros**__:  
+  - __**Resultado**__:  
+- **sp_getSketch(userid, nombre)** :  
+  - __**Descripcion**__:  
+  - __**Parametros**__:  
+  - __**Resultado**__:  

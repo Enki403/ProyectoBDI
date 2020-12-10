@@ -13,7 +13,7 @@ CREATE TABLE User(
 INSERT INTO User(name,password,creationDate) VALUES 
     ('Nelson Sambula','nel','2020-04-11'),
     ('Leonel Messi','ja','2020-03-23'),
-    ('Crsitiano Ronaldo','je','2020-07-19')
-;
+    ('Crsitiano Ronaldo','je','2020-07-19'),
+    ('si se pudo','je','2020-07-19')
 
-SELECT * FROM User;
+;

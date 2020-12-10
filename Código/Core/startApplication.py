@@ -29,4 +29,3 @@ class StartApplication:
         return True
 
 
-

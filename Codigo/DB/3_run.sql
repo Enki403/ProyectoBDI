@@ -30,3 +30,7 @@ CALL sp_createDrawing(2, "Dibujo 3", '{"data":"testData"}');
 CALL sp_createDrawing(3, "Dibujo", '{"data":"testData"}');
 CALL sp_createDrawing(3, "Dibujos", '{"data":"testData"}');
 CALL sp_createDrawing(4, "Dibujoslocos", '{"data":"testData"}');
+
+CALL sp_getUsers();
+CALL sp_getDrawings();
+CALL sp_getLogbook();

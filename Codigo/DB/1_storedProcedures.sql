@@ -55,7 +55,7 @@ BEGIN
         SELECT @full_error AS "ERROR";
     END;
     -- * Inserta al usuario a la base de datos
-    INSERT INTO User(blo_name, blo_password) VALUES (AES_ENCRYPT(NOMBRE, @key), AES_ENCRYPT(PASS, @key));
+    INSERT INTO User(blo_name, blo_password) VALUES (AES_ENCRYPT(NOMBRE, "admin"), AES_ENCRYPT(PASS, "admin"));
     IF ROW_COUNT() = 1 THEN
         INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (1, 3, CONCAT("User '", NOMBRE, "' created."));
     END IF;
@@ -63,7 +63,7 @@ END$$
 
 /**
  * !SP deleteUser
- * * Elimina al usuario de la base de datos, excepto al administrador
+ * * Elimina al usuario de la base de datos y todos sus dibujos, excepto al administrador
  * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
  * @date 6/12/2020
  * @version 1
@@ -84,9 +84,9 @@ BEGIN
     END;
     -- * Borra al usuario de la base de datos solo si no es el administrador
     IF 'admin' != NOMBRE THEN
-        DELETE FROM User WHERE AES_DECRYPT(blo_name, @key) = NOMBRE;
+        DELETE FROM User WHERE AES_DECRYPT(blo_name, "admin") = NOMBRE;
         IF ROW_COUNT() = 1 THEN
-            INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (1, 5, CONCAT("User '", NOMBRE, "' deleted."));
+            INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (1, 5, CONCAT("User '", NOMBRE, "' deleted with all its drawings."));
         END IF;
     END IF;
 END$$
@@ -112,7 +112,7 @@ BEGIN
         SELECT @full_error AS "ERROR";
     END;
     -- * Obtiene todos los usuarios
-    SELECT id AS "id", AES_DECRYPT(blo_name, @key) AS "Name", AES_DECRYPT(blo_password, @key) AS "Password", AES_DECRYPT(blo_creationDate, @key) AS "Creation Date", AES_DECRYPT(blo_modificationDate, @key) AS "Modification Date" FROM User  WHERE  AES_DECRYPT(blo_name, @key) != 'admin';
+    SELECT id AS "id", AES_DECRYPT(blo_name, "admin") AS "Name", AES_DECRYPT(blo_password, "admin") AS "Password", AES_DECRYPT(blo_creationDate, "admin") AS "Creation Date", AES_DECRYPT(blo_modificationDate, "admin") AS "Modification Date" FROM User  WHERE  AES_DECRYPT(blo_name, "admin") != 'admin';
 END$$
 
 /**
@@ -139,9 +139,9 @@ BEGIN
     END;
     -- * Modifica el usuario que concuerde con el parametro
     UPDATE User 
-        SET blo_name = AES_ENCRYPT(NOMBRE, @key),
-            blo_modificationDate = AES_ENCRYPT(NOW(), @key)
-        WHERE blo_name = AES_ENCRYPT(OLD_NOMBRE, @key);
+        SET blo_name = AES_ENCRYPT(NOMBRE, "admin"),
+            blo_modificationDate = AES_ENCRYPT(NOW(), "admin")
+        WHERE blo_name = AES_ENCRYPT(OLD_NOMBRE, "admin");
     IF ROW_COUNT() = 1 THEN
         INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (1, 4, CONCAT("User with name '", OLD_NOMBRE, "' updated to '", NOMBRE,"'."));
     END IF;
@@ -172,9 +172,9 @@ BEGIN
     -- * Modifica el usuario que concuerde con el parametro
     IF 'admin' != NOMBRE THEN
         UPDATE User 
-            SET blo_password = AES_ENCRYPT(PASS, @key),
-                blo_modificationDate = AES_ENCRYPT(NOW(), @key)
-            WHERE blo_name = AES_ENCRYPT(NOMBRE, @key);
+            SET blo_password = AES_ENCRYPT(PASS, "admin"),
+                blo_modificationDate = AES_ENCRYPT(NOW(), "admin")
+            WHERE blo_name = AES_ENCRYPT(NOMBRE, "admin");
         IF ROW_COUNT() = 1 THEN
             INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (1, 4, CONCAT("User's ('", NOMBRE, "') password has been updated.")); 
         END IF;
@@ -193,7 +193,7 @@ CREATE PROCEDURE sp_getLogbook()
 BEGIN
     -- * Obtiene todos los resultados de  la bitacora
     SELECT Logbook.id AS "id", 
-           AES_DECRYPT(User.blo_name, @key) AS "User Name",
+           AES_DECRYPT(User.blo_name, "admin") AS "User Name",
            Activity.var_name AS "Action", 
            Logbook.tex_description AS "Description", 
            Logbook.dat_creationDate AS "Creation Date" 
@@ -211,8 +211,8 @@ DROP PROCEDURE IF EXISTS sp_getConfig$$
 CREATE PROCEDURE sp_getConfig()
 BEGIN
     -- * Obtiene los registros de configuracion
-    SELECT AES_DECRYPT(blo_penColorValue, @key) AS "Pen Color Value", 
-           AES_DECRYPT(blo_fillColorValue, @key) AS "Fill Color Value"
+    SELECT AES_DECRYPT(blo_penColorValue, "admin") AS "Pen Color Value", 
+           AES_DECRYPT(blo_fillColorValue, "admin") AS "Fill Color Value"
     FROM Config;
     INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (1, 2, CONCAT("Pen Color and Fill Color has been seen.")); 
 END$$
@@ -230,8 +230,8 @@ CREATE PROCEDURE sp_setConfig(
 BEGIN
     -- * modifica los registros de configuracion
     UPDATE Config 
-            SET blo_penColorValue = AES_ENCRYPT(PEN, @key),
-                blo_fillColorValue = AES_ENCRYPT(FILL, @key)
+            SET blo_penColorValue = AES_ENCRYPT(PEN, "admin"),
+                blo_fillColorValue = AES_ENCRYPT(FILL, "admin")
             WHERE id = 1;
     IF ROW_COUNT() = 1 THEN
         INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (1, 4, CONCAT("Congiguration values has been updated.")); 
@@ -289,9 +289,9 @@ BEGIN
 
     -- * Inserta dibujo a la base de datos
     INSERT INTO Drawing(id_user, blo_name, blo_blob) VALUES 
-        (USERID, AES_ENCRYPT(NOMBRE, @key), AES_ENCRYPT(DRAWDATA, @key));
+        (USERID, AES_ENCRYPT(NOMBRE, "admin"), AES_ENCRYPT(DRAWDATA, "admin"));
     IF ROW_COUNT() = 1 THEN
-        INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (USERID, 3, CONCAT("Drawing '", NOMBRE, "' has been created by ", (SELECT AES_DECRYPT(User.blo_name, @key) FROM User WHERE User.id = USERID),"."));
+        INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (USERID, 3, CONCAT("Drawing '", NOMBRE, "' has been created by ", (SELECT AES_DECRYPT(User.blo_name, "admin") FROM User WHERE User.id = USERID),"."));
     END IF;
 END$$
 
@@ -319,9 +319,9 @@ BEGIN
     END;
 
     -- * Elimina dibujo a la base de datos
-    DELETE FROM Drawing WHERE AES_DECRYPT(blo_name, @key) = NOMBRE;
+    DELETE FROM Drawing WHERE AES_DECRYPT(blo_name, "admin") = NOMBRE;
     IF ROW_COUNT() = 1 THEN
-        INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (1, 5, CONCAT("Drawing '", NOMBRE, "' has been deleted by ", (SELECT AES_DECRYPT(User.blo_name, @key) FROM User WHERE User.id = USERID),"."));
+        INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (1, 5, CONCAT("Drawing '", NOMBRE, "' has been deleted by ", (SELECT AES_DECRYPT(User.blo_name, "admin") FROM User WHERE User.id = USERID),"."));
     END IF;
 END$$
 
@@ -346,7 +346,7 @@ BEGIN
         SELECT @full_error AS "ERROR";
     END;
     -- * Obtiene todos los dibujos
-    SELECT Drawing.id AS "id", AES_DECRYPT(User.blo_name, @key) AS "User", AES_DECRYPT(Drawing.blo_name, @key) AS "Name"  FROM Drawing, User WHERE Drawing.id_user = User.id;
+    SELECT Drawing.id AS "id", AES_DECRYPT(User.blo_name, "admin") AS "User", AES_DECRYPT(Drawing.blo_name, "admin") AS "Name"  FROM Drawing, User WHERE Drawing.id_user = User.id;
 END$$
 
 /**
@@ -372,12 +372,13 @@ BEGIN
         SELECT @full_error AS "ERROR";
     END;
     -- * Obtiene todos los dibujos
-    SELECT Drawing.id AS "id", AES_DECRYPT(User.blo_name, @key) AS "User", AES_DECRYPT(Drawing.blo_name, @key) AS "Name"  FROM Drawing, User WHERE USERID = User.id;
+    SELECT Drawing.id AS "id", AES_DECRYPT(User.blo_name, "admin") AS "User", AES_DECRYPT(Drawing.blo_name, "admin") AS "Name"  FROM Drawing, User WHERE USERID = User.id;
 END$$
 
+-- TODO: Hacer que si el id de usuario es 1, el admin, muestre cualquier dibujo.
 /**
  * !SP getSketch
- * * Obtiene el nombre de todos los dibujos de un usuario en especifico
+ * * Obtiene los la informacion de un dibujo en especifico.
  * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
  * @date 8/12/2020
  * @version 1
@@ -399,7 +400,8 @@ BEGIN
     END;
     IF (SELECT count(*) FROM Drawing WHERE id_user = USERID)>0 THEN
         -- * Obtiene todos los dibujos
-        SELECT id AS "id", AES_DECRYPT(blo_name, @key) AS "Name", AES_DECRYPT(blo_blob, @key) AS "Drawing Data" FROM Drawing WHERE blo_name = AES_ENCRYPT(NOMBRE, @key);
+        SELECT id AS "id", AES_DECRYPT(blo_name, "admin") AS "Name", AES_DECRYPT(blo_blob, "admin") AS "Drawing Data" FROM Drawing WHERE blo_name = AES_ENCRYPT(NOMBRE, "admin");
+        INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (1, 5, CONCAT("Drawing '", NOMBRE, "' has been seen by ", (SELECT AES_DECRYPT(User.blo_name, "admin") FROM User WHERE User.id = USERID),"."));
     ELSE
         SELECT CONCAT('{ "errno": 3, "msg": "This user has no drawings yet."}') AS "ERROR";
     END IF;

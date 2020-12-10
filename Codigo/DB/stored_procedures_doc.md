@@ -10,56 +10,68 @@ Stored Procedures
   - __**Parametros**__:  
     - NOMBRE: Es el nombre de del nuevo usuario.  
     - PASS: Es la contraseña del nuevo usuario.  
-  - __**Resultado**__: N/A  
+  - __**Resultado**__: Ademas de crear un usuario en la base de datos, crea un registro en la bitacora.  
 - **sp_deleteUser(nombre)** :  
-  - __**Descripcion**__: Elimina al usuario de la base de datos, excepto al administrador.  
+  - __**Descripcion**__: Elimina al usuario de la base de datos y todos sus dibujos, excepto al administrador.  
   - __**Parametros**__: NOMBRE  
-  - __**Resultado**__: N/A  
+  - __**Resultado**__: Ademas de eliminar a un usuario de la base de datos, crea un registro en la bitacora.  
 - **sp_getUsers()** :  
   - __**Descripcion**__:  Obtiene el nombre de todos los usuarios exceptuando del administrador.
   - __**Parametros**__: N/A  
-  - __**Resultado**__: N/A  
+  - __**Resultado**__: Muestra una tabla con todos los usuarios excepto al administrador.  
 - **sp_modifyUserName(old_nombre, nombre)** :  
   - __**Descripcion**__: Modifica el nombre de un usuario de OLD_NOMBRE a NOMBRE exceptuando al administrador.  
   - __**Parametros**__: N/A  
-  - __**Resultado**__: N/A  
+  - __**Resultado**__: Modifica el nombre de usuario y crea un registro en la bitacora.  
 - **sp_modifyUserPass(nombre, new_pass)** :  
-  - __**Descripcion**__:  
-  - __**Parametros**__:  
-  - __**Resultado**__:  
+  - __**Descripcion**__: Modifica la contraseña por PASS del usuario NOMBRE exceptuando al administrador.  
+  - __**Parametros**__:
+    - NOMBRE: Indica el nombre del usaurio al que se le desea cambiar la contraseña.  
+    - PASS: Es la contraseña nueva del usaurio.  
+  - __**Resultado**__: Modifica la contraseña y crea un registro en la bitacora.  
 - **sp_getLogbook()** :  
-  - __**Descripcion**__:  
-  - __**Parametros**__:  
-  - __**Resultado**__:  
+  - __**Descripcion**__: Obtiene el los datos de la bitacora.  
+  - __**Parametros**__: N/A  
+  - __**Resultado**__: Muestra todos los registros en la bitacora.  
 - **sp_getConfig()** :  
-  - __**Descripcion**__:  
-  - __**Parametros**__:  
-  - __**Resultado**__:  
+  - __**Descripcion**__: Obtiene el los datos de la configuracion de pen color y fill color.  
+  - __**Parametros**__: N/A  
+  - __**Resultado**__: Muestra una tabla con la configuracion inicial.  
 - **sp_setConfig(pencolor, fillcolor)** :  
-  - __**Descripcion**__:  
+  - __**Descripcion**__: Cambia los datos de pen color y fill color.  
   - __**Parametros**__:  
-  - __**Resultado**__:  
+    - PEN: Representa el valor de Pen Color; eg. #0008ff  
+    - FILL: Representa el valor de Fill Color; eg. #0008ff  
+  - __**Resultado**__: Ademas de configurar los valores, crea un registro en la bitacora.  
 - **sp_userAuthenticated(nombre)** :  
-  - __**Descripcion**__:  
+  - __**Descripcion**__: Una vez que el usuario ha ingresado a la app, este es tomado como valido y se registra en la bitacora con dicho registro.
   - __**Parametros**__:  
+    - NOMBRE: una vez que el usuario ha ingresado a la app
   - __**Resultado**__:  
-- **sp_createDrawing(userid, nombre, drawdat*a)* :  
-  - __**Descripcion**__:  
+- **sp_createDrawing(userid, nombre, drawdata)** :  
+  - __**Descripcion**__: Crea un dibujo en la base de datos. USERID representa el id del usuario que guarda.
   - __**Parametros**__:  
-  - __**Resultado**__:  
+    - NOMBRE: Representa el nombre del dibujo, los nombres son unicos de forma que no se puede repetir el mismo nombre, retorna un json con el error para avisar que el nombre ya existe.
+    - DRAWDATA: Representa el json con la informacion del sketch.  
+  - __**Resultado**__: Ademas de crear el dibujo en la bd, crea un registro en la bitacora.  
 - **sp_deleteDrawing(userid, nombre)** :  
-  - __**Descripcion**__:  
+  - __**Descripcion**__: Elimina un dibujo en la base de datos.  
   - __**Parametros**__:  
-  - __**Resultado**__:  
+    - USERID: El id del usuario que esta realizando dicha accion.  
+    - NOMBRE: El nombre del dibujo que se va a borrar.  
+  - __**Resultado**__: Ademas de eliminar el usuario crea un registro en la bitacora.  
 - **sp_getDrawings()** :  
-  - __**Descripcion**__:  
-  - __**Parametros**__:  
-  - __**Resultado**__:  
+  - __**Descripcion**__: Obtiene el nombre de todos los dibujos.  
+  - __**Parametros**__: N/A  
+  - __**Resultado**__: Muestra todos los nombres de los dibujos que existen en la bd, esta accion solo la debe de poder hacer el administrador.  
 - **sp_getDrawingByUser(userid)** :  
-  - __**Descripcion**__:  
+  - __**Descripcion**__: Obtiene el nombre de todos los dibujos de un usuario en especifico.  
   - __**Parametros**__:  
-  - __**Resultado**__:  
+    - USERID: Es el id del usuario actualmente logeado.
+  - __**Resultado**__: Muestra todos los dibujos del usuario actual y crea un registro en la bitacora.  
 - **sp_getSketch(userid, nombre)** :  
-  - __**Descripcion**__:  
+  - __**Descripcion**__: Obtiene los la informacion de un dibujo en especifico.  
   - __**Parametros**__:  
-  - __**Resultado**__:  
+    - USERID: Es el numero del usuario que solicita el dibujo.  
+    - NOMBRE: Es el nombre del dibujo que se solicita.  
+  - __**Resultado**__: Obtiene la informacion del dibujo para poder ser cargado en la app y crea un registro de visualizacion en la app.  

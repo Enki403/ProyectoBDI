@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-
-# Resource object code
-#
-# Created by: The Resource Compiler for PyQt5 (Qt v5.11.3)
-#
-# WARNING! All changes made in this file will be lost!
+"""
+    @author nelson.sambula@unah.hn
+    @version 0.1
+    @date 2020/12/12
+"""
 
 from PyQt5 import QtCore
 

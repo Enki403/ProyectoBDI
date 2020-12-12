@@ -3,7 +3,7 @@ from tkinter import *
 from Core.connection import *
 from Core.drawTools import *
 
-class Config:
+class Save:
     def __init__(self,window,credentials):
         self.credentials = credentials
         self.cnx = ConnectionDB(self.credentials)

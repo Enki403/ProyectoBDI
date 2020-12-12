@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+    @author nelson.sambula@unah.hn
+    @version 0.1
+    @date 2020/12/12
+"""
 import turtle
 import tkinter
 import tkinter.colorchooser
@@ -7,11 +13,19 @@ import json
 from Core.drawCommands import *
 from Core.drawActions import *
 from Core.drawTools import *
+from Core.load import *
+from Core.save import *
 
-"""
-* Clase principal de la aplicacion de dibujo.
-"""
+
 class DrawingApplication(tkinter.Frame):
+    """
+    ! Clase principal de la aplicacion de dibujo.
+    * Inicializacion de las variables globales, cuales son bases y representacion del dibujo actual en ventana.
+    * Se crea el menu de acciones respecto al dibujo.
+    * Se hacen llamados a diferentes funciones que se encargan de construir el componente de dibujado.
+    * Se construyen los componentes / herramientas para dibujar, permitidas por tkinter.
+    * Se inicializan la clase de acciones sobre el dibujo, las cuales les permite al usuario decidir que hacer respecto a su dibujo.
+    """
     def __init__(self,credentials,master=None,admin=False):
         self.admin = admin
         self.credentials = credentials
@@ -19,13 +33,8 @@ class DrawingApplication(tkinter.Frame):
         self.tkinter = tkinter
         self.turtle = turtle
         self.initializeDrawVariables()
-    """
-    * Inicializacion de las variables globales, cuales son bases y representacion del dibujo actual en ventana.
-    * Se crea el menu de acciones respecto al dibujo.
-    * Se hacen llamados a diferentes funciones que se encargan de construir el componente de dibujado.
-    * Se construyen los componentes / herramientas para dibujar, permitidas por tkinter.
-    * Se inicializan la clase de acciones sobre el dibujo, las cuales les permite al usuario decidir que hacer respecto a su dibujo.
-    """
+
+
     def initializeDrawVariables(self):
         self.master.title("Draw")
         self.bar = self.tkinter.Menu(self.master)
@@ -51,19 +60,21 @@ class DrawingApplication(tkinter.Frame):
     """
     def createDrawActions(self):
         self.fileMenu.add_command(label="New", command=self.action.newWindow)
-        self.fileMenu.add_command(label="Load",command=self.action.loadFile)
-        self.fileMenu.add_command(label="Save As",command=self.action.saveFile)
+        # self.fileMenu.add_command(label="Load",command=self.action.loadFile)
+        self.fileMenu.add_command(label="Load",command=self.loadMenu)
+        self.fileMenu.add_command(label="Save As",command=self.saveMenu)
         self.fileMenu.add_command(label="Download",command=self.action.downloadFile)
         if(self.admin):
             self.fileMenu.add_command(label="Configuration",command=self.configMenu)
         self.fileMenu.add_command(label="Exit",command=self.master.quit)
     
-    """
-    * Construye los componentes de las herramientas de dibujo en la ventana.
-    * A su vez se define la accion a ejecutar cuando se interactua con una herramienta de dibujo.
-    * Se crea una pestana principal, la cual este desglosa las diferentes acciones que el usuario puede realizar.
-    """
+   
     def buildWindow(self):
+         """
+            * Construye los componentes de las herramientas de dibujo en la ventana.
+            * A su vez se define la accion a ejecutar cuando se interactua con una herramienta de dibujo.
+            * Se crea una pestana principal, la cual este desglosa las diferentes acciones que el usuario puede realizar.
+        """
         self.screen.tracer(0)
         self.bar.add_cascade(label="File", menu=self.fileMenu)
         self.master.config(menu=self.bar)
@@ -135,15 +146,31 @@ class DrawingApplication(tkinter.Frame):
         self.screen.onkeypress(self.tools.undoHandler, "u")
         self.screen.listen()
     
-    """
-    * Permite obtener la referencia a la clase principal del dibujo.
-    """
+   
     def getApp(self):
+         """
+            * Permite obtener la referencia a la clase principal del dibujo.
+        """
         return self
 
-    """
-    * Permite mostrar el menu de configuracion al usuario administrador
-    """
+
     def configMenu(self):
+        """
+            * Permite mostrar el menu de configuracion al usuario administrador
+        """
         tl = Toplevel()
         conf = Config(tl,self.credentials)
+
+    def loadMenu(self):
+        """
+            * Permite abrir un menu para elegir un dibujo de la base de datos
+        """
+        tl = Toplevel()
+        load = Load(tl,self.credentials)
+
+    def saveMenu(self):
+        """
+            * Permite abrir un menu para crear
+        """
+        tl = Toplevel()
+        load = Save(tl,self.credentials)

@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+    @author nelson.sambula@unah.hn
+    @version 0.1
+    @date 2020/12/12
+"""
+
 import turtle
 import tkinter
 import tkinter.colorchooser

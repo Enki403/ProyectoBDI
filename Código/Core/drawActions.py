@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+    @author nelson.sambula@unah.hn
+    @version 0.1
+    @date 2020/12/12
+"""
 import turtle
 import tkinter
 import tkinter.colorchooser
@@ -8,13 +14,14 @@ from Core.drawCommands import *
 from Core.drawActions import *
 from Core.configure import *
 
-"""
-* La clase contiene todas las acciones respecto al dibujo en referencia a la Base de Datos
-* @constructor fileMenu
-* @constructor theTurtle
-* @constructor screen
-"""
 class DrawAction():
+    """
+        ! Clase DrawAction
+        * La clase contiene todas las acciones respecto al dibujo en referencia a la Base de Datos
+        * @constructor fileMenu
+        * @constructor theTurtle
+        * @constructor screen
+    """
     def __init__(self, fileMenu=None, theTurtle = None, screen = None, graphicsCommands = None, app = None):
         self.fileMenu_ = fileMenu
         self.theTurtle = theTurtle
@@ -22,10 +29,10 @@ class DrawAction():
         self.graphicsCommands = graphicsCommands
         self.app = app
 
-    """
-    * Limpia la ventana de dibujo actual.
-    """
     def newWindow(self):
+        """
+            * Limpia la ventana de dibujo actual.
+        """
             print('Limpiando la ventana...')
             self.theTurtle.clear()
             self.theTurtle.penup()
@@ -34,38 +41,19 @@ class DrawAction():
             self.screen.update()
             self.screen.listen()
             self.graphicsCommands = PyList()
-    """
-    * Abre una ventana de dialogo con la lista de los dibujos guardados por el usuario que ejecute la accion.
-    * Permitiendo la seleccion de dibujo para posteriormente cargar dicho dibujo en la ventana y mostrarlo.
-    """
-    def loadFile(self):
-        dt = self.app.getApp()
-        print('Abriendo ventana de dialogo para cargar dibujo...')
-        filename = tkinter.filedialog.askopenfilename(title="Select a Graphics File")
-        self.newWindow()
-        self.graphicsCommands = PyList()
-        self.parse(filename)
-        for cmd in dt.graphicsCommands:
-            cmd.draw(dt.theTurtle)
-
-    """
-    * Realiza el guardado de los registros del dibujo realizado, escribiendolos en formato JSON en un .json
-    """
+    
     def saveFile(self):
+        """
+            * Realiza el guardado de los registros del dibujo realizado, escribiendolos en formato JSON en un .json
+        """
         print('Guardando dibujo...')
         filename = tkinter.filedialog.asksaveasfilename(title="Save Picture AS...")
         self.write(filename + '.json')
     
-    """
-    * Permite descargar los registros del dibujo actual en la ventana de dibujo, este se guarda en formato JSON.
-    """
-    def downloadFile(self):
-        print('Descargando dibujo')
-
-    """
-    * Realizar un parseo de los registros de un archivo, para convertirtir el dibujo que representa.
-    """
     def parse(self, filename):
+        """
+            * Realizar un parseo de los registros de un archivo, para convertirtir el dibujo que representa.
+        """
             dt = self.app.getApp()
             print('fileNamae: ', filename)
             file = open(filename,'r')

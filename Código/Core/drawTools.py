@@ -1,13 +1,22 @@
-import turtle
+# -*- coding: utf-8 -*-
+"""
+    @author nelson.sambula@unah.hn
+    @version 0.1
+    @date 2020/12/12
+"""
+
 import tkinter.colorchooser
 import tkinter.filedialog
 import xml.dom.minidom
-import json
 from Core.drawCommands import *
 from Core.drawActions import *
-
+import json
+import turtle
 
 class DrawTools():
+    """
+        ! Clase DrawTools
+    """
     def __init__(self, app):
         self.app = app
 

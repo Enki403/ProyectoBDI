@@ -1,8 +1,16 @@
 # -*- coding: utf-8 -*-
+"""
+    @author nelson.sambula@unah.hn
+    @version 0.1
+    @date 2020/12/12
+"""
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 class Ui_Login(object):
+    """
+        ! Clase Ui_Login
+        * Esta clase se autogenero conforme al Login diseñado en QTDesigner
+    """
     def setupUi(self, Login):
         Login.setObjectName("Login")
         Login.setEnabled(True)

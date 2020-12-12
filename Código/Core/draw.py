@@ -19,7 +19,6 @@ class DrawingApplication(tkinter.Frame):
         self.tkinter = tkinter
         self.turtle = turtle
         self.initializeDrawVariables()
-
     """
     * Inicializacion de las variables globales, cuales son bases y representacion del dibujo actual en ventana.
     * Se crea el menu de acciones respecto al dibujo.
@@ -56,7 +55,6 @@ class DrawingApplication(tkinter.Frame):
         self.fileMenu.add_command(label="Save As",command=self.action.saveFile)
         self.fileMenu.add_command(label="Download",command=self.action.downloadFile)
         if(self.admin):
-            # self.fileMenu.add_command(label="Configuration",command=self.action.openConfigDialog)
             self.fileMenu.add_command(label="Configuration",command=self.configMenu)
         self.fileMenu.add_command(label="Exit",command=self.master.quit)
     

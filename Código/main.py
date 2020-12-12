@@ -19,12 +19,6 @@ dbCredentials = {
     'database': config['DEFAULT']['db']
 }
 
-host = values['host']
-user = values['user']
-password = values['pass']
-
-os.system('cd Scripts; mysql -u%s -h %s -p%s < testU.sql' %(user,host,password))
-
 # connectionDB = ConnectionDB(dbCredentials)
 startApp= StartApplication(dbCredentials)
 

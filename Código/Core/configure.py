@@ -1,8 +1,7 @@
 from tkinter import ttk
 from tkinter import *
 from Core.connection import *
-import configparser
-import mysql.connector
+from Core.drawTools import *
 
 class Config:
     def __init__(self,window,credentials):
@@ -51,12 +50,14 @@ class Config:
         ttk.Button(frame,text = 'EDIT PASSWORD', command = self.editPassword).grid(row = 8, column = 1, sticky = W + E)
 
         #Button PenColor
-        ttk.Button(frame,text = 'PEN COLOR').grid(row = 10, column = 0, sticky = W + E)
-        Label(frame, text = '#000000').grid(row = 10, column = 1)
+        ttk.Button(frame,text = 'PEN COLOR', command = self.penColorAction).grid(row = 10, column = 0, sticky = W + E)
+        self.penColorLabel = Label(frame,text = '#000000')
+        self.penColorLabel.grid(row = 10, column = 1, columnspan = 3, sticky = W+E)
 
         #Button FillColor
-        ttk.Button(frame,text = 'FILL COLOR').grid(row = 11, column = 0, sticky = W + E)
-        Label(frame, text = '#000000').grid(row = 11, column = 1)
+        ttk.Button(frame,text = 'FILL COLOR', command = self.fillColorAction).grid(row = 11, column = 0, sticky = W + E)
+        self.fillColorLabel = Label(frame,text = '#000000')
+        self.fillColorLabel.grid(row = 11, column = 1, columnspan = 3, sticky = W+E)
 
         self.getUsers()
 
@@ -177,4 +178,11 @@ class Config:
         self.getUsers()
 
     def penColorAction(self):
-        pass
+        app = tkinter.ttk
+        color = app.tkinter.colorchooser.askcolor()
+        self.penColorLabel['text'] = color[1]
+
+    def fillColorAction(self):
+        app = tkinter.ttk
+        color = app.tkinter.colorchooser.askcolor()
+        self.fillColorLabel['text'] = color[1]

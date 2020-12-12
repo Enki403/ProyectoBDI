@@ -61,14 +61,7 @@ class DrawAction():
     """
     def downloadFile(self):
         print('Descargando dibujo')
-    
-    """
-    * Abre la ventana de configuracion de la cual solo el usuario administrador puede acceder.
-    """
-    # def openConfigDialog(self):
-    #     tl = Toplevel()
-    #     conf = Config(tl)
-    
+
     """
     * Realizar un parseo de los registros de un archivo, para convertirtir el dibujo que representa.
     """

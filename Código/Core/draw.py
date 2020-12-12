@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
     @author nelson.sambula@unah.hn
+    @author
+    @author
     @version 0.1
     @date 2020/12/12
 """
@@ -60,17 +62,15 @@ class DrawingApplication(tkinter.Frame):
     """
     def createDrawActions(self):
         self.fileMenu.add_command(label="New", command=self.action.newWindow)
-        # self.fileMenu.add_command(label="Load",command=self.action.loadFile)
         self.fileMenu.add_command(label="Load",command=self.loadMenu)
         self.fileMenu.add_command(label="Save As",command=self.saveMenu)
-        self.fileMenu.add_command(label="Download",command=self.action.downloadFile)
+        # self.fileMenu.add_command(label="Download",command=self.action.downloadFile)
         if(self.admin):
             self.fileMenu.add_command(label="Configuration",command=self.configMenu)
         self.fileMenu.add_command(label="Exit",command=self.master.quit)
     
-   
     def buildWindow(self):
-         """
+        """
             * Construye los componentes de las herramientas de dibujo en la ventana.
             * A su vez se define la accion a ejecutar cuando se interactua con una herramienta de dibujo.
             * Se crea una pestana principal, la cual este desglosa las diferentes acciones que el usuario puede realizar.
@@ -148,7 +148,7 @@ class DrawingApplication(tkinter.Frame):
     
    
     def getApp(self):
-         """
+        """
             * Permite obtener la referencia a la clase principal del dibujo.
         """
         return self

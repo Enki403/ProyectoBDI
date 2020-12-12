@@ -19,6 +19,7 @@ import sys
 config = configparser.ConfigParser()
 config.sections()
 config.read('config.ini')
+values = config['DATABASE']
 
 # Creacion de archivo 
 dbCredentials = {

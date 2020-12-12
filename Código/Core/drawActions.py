@@ -33,14 +33,14 @@ class DrawAction():
         """
             * Limpia la ventana de dibujo actual.
         """
-            print('Limpiando la ventana...')
-            self.theTurtle.clear()
-            self.theTurtle.penup()
-            self.theTurtle.goto(0,0)
-            self.theTurtle.pendown()
-            self.screen.update()
-            self.screen.listen()
-            self.graphicsCommands = PyList()
+        print('Limpiando la ventana...')
+        self.theTurtle.clear()
+        self.theTurtle.penup()
+        self.theTurtle.goto(0,0)
+        self.theTurtle.pendown()
+        self.screen.update()
+        self.screen.listen()
+        self.graphicsCommands = PyList()
     
     def saveFile(self):
         """
@@ -54,45 +54,44 @@ class DrawAction():
         """
             * Realizar un parseo de los registros de un archivo, para convertirtir el dibujo que representa.
         """
-            dt = self.app.getApp()
-            print('fileNamae: ', filename)
-            file = open(filename,'r')
-            data = file.read()
-            dict_ = json.loads(data)
-            file.close()
-            for key in dict_:
-                current = dict_[key]
-                print('current: ', current)
-                command = current['command']
-                if command == "GoTo":
-                    x = float(current["x"])
-                    y = float(current["y"])
-                    width = float(current["width"])
-                    color = current["color"].strip()
-                    cmd = GoToCommand(x,y,width,color)
+        dt = self.app.getApp()
+        print('fileNamae: ', filename)
+        file = open(filename,'r')
+        data = file.read()
+        dict_ = json.loads(data)
+        file.close()
+        for key in dict_:
+            current = dict_[key]
+            print('current: ', current)
+            command = current['command']
+            if command == "GoTo":
+                x = float(current["x"])
+                y = float(current["y"])
+                width = float(current["width"])
+                color = current["color"].strip()
+                cmd = GoToCommand(x,y,width,color)
+            elif command == "Circle":
+                radius = float(current["radius"])
+                width = float(current["width"])
+                color = current["color"].strip()
+                cmd = CircleCommand(radius,width,color)
 
-                elif command == "Circle":
-                    radius = float(current["radius"])
-                    width = float(current["width"])
-                    color = current["color"].strip()
-                    cmd = CircleCommand(radius,width,color)
+            elif command == "BeginFill":
+                color = current["color"].strip()
+                cmd = BeginFillCommand(color)
 
-                elif command == "BeginFill":
-                    color = current["color"].strip()
-                    cmd = BeginFillCommand(color)
+            elif command == "EndFill":
+                cmd = EndFillCommand()
 
-                elif command == "EndFill":
-                    cmd = EndFillCommand()
+            elif command == "PenUp":
+                cmd = PenUpCommand()
 
-                elif command == "PenUp":
-                    cmd = PenUpCommand()
+            elif command == "PenDown":
+                cmd = PenDownCommand()
 
-                elif command == "PenDown":
-                    cmd = PenDownCommand()
-
-                else:
-                    raise RuntimeError("Unknown Command:" + command)
-                dt.graphicsCommands.append(cmd)
+            else:
+                raise RuntimeError("Unknown Command:" + command)
+            dt.graphicsCommands.append(cmd)
 
     def write(self, filename):
         file = open(filename, "w")

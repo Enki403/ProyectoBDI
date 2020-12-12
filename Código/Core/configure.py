@@ -1,9 +1,24 @@
+# -*- coding: utf-8 -*-
+"""
+    @author renata
+    @author nelson.sambula@unah.hn
+    @author luis
+    @author hector
+    @version 0.1
+    @date 2020/12/12
+"""
+
 from tkinter import ttk
 from tkinter import *
 from Core.connection import *
 from Core.drawTools import *
 
 class Config:
+    """
+        ! clase Config
+        * Esta clase ejecuta el menu de configuracion que permite al usuario acceder al menu de configuracion
+        *
+    """
     def __init__(self,window,credentials):
         self.credentials = credentials
         self.cnx = ConnectionDB(self.credentials)
@@ -61,16 +76,15 @@ class Config:
 
         self.getUsers()
 
-
     #Este metodo muestra los valores de la DB en la tabla de configuracion
     def getUsers(self):
         #Limpiando los datos que existen en la tabla
         records = self.tree.get_children()
         for element in records:
             self.tree.delete(element)
-        query = 'sp_getUsers'
-        # rows = self.cnx.executeQueryRead(query)
-        rows = self.cnx.executeSP(query)
+        query = 'SELECT * FROM User'
+        rows = self.cnx.executeQueryRead(query)
+        # rows = self.cnx.executeSP(query)
         for row in rows:
             self.tree.insert('',0,text= row[1],values=row)
         

@@ -66,7 +66,7 @@ class DrawingApplication(tkinter.Frame):
     def createDrawActions(self):
         self.fileMenu.add_command(label="New", command=self.newWindow)
         self.fileMenu.add_command(label="Load",command=self.loadMenu)
-        self.fileMenu.add_command(label="Save As",command=self.saveMenu)
+        self.fileMenu.add_command(label="Save As",command=self.saveWindow)
         # self.fileMenu.add_command(label="Download",command=self.action.downloadFile)
         if(self.admin):
             self.fileMenu.add_command(label="Configuration",command=self.configMenu)

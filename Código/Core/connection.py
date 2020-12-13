@@ -39,14 +39,57 @@ class ConnectionDB:
         cnx.close()
 
 
+    # def executeSP(self):
+    #     valuesReturn = []
+    #     cnx = mysql.connector.connect(**self.credentials)
+    #     cursor = cnx.cursor()
+    #     cursor.callproc('sp_getUsers')
+
+    #     print("estoy imprimiendo el metodo")
+    #     for result in cursor.stored_results():
+    #         # print(result.fetchall())
+    #         for x in result.fetchall():
+    #             data = [line for line in x]  
+    #             for i in x:
+    #                 aux = []
+    #                 if isinstance(i, bytearray):
+    #                     i = i.decode("utf-8")
+    #                 aux.append(i)
+    #             valuesReturn.append(aux)
+    #         #     print(range(len(x)))
+    #         #     for i in x:
+
+    #         #         if isinstance(i,bytearray):
+    #         #         if isinstance(i,bytearray):
+    #         #             i = i.decode('utf-8')
+    #         #             # print(otra)
+    #         #             # print("de la instancia")
+    #         #     #     aux.append(i)
+    #         #     # valuesReturn.append(aux)
+    #         #             # print(i)
+    #         #             # print("este es un id")
+
+
+
     def executeSP(self):
+        valuesReturn = []
+        aux = []
         cnx = mysql.connector.connect(**self.credentials)
         cursor = cnx.cursor()
         cursor.callproc('sp_getUsers')
 
-        print("estoy imprimiendo el metodo")
         for result in cursor.stored_results():
-            print(result.fetchall())
+            for x in result.fetchall():
+                for i in x:
+                    if isinstance(i,bytearray):
+                    if isinstance(i,bytearray):
+                        i = i.decode('utf-8')
+                    aux.append(i)
+                valuesReturn.append(aux)
+
+
+
+        print(valuesReturn)
 
         cnx.commit()
         cnx.close()

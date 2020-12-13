@@ -171,10 +171,25 @@ class DrawingApplication(tkinter.Frame):
         tl = Toplevel()
         load = Load(tl,self.credentials, self.action, self, self.idUserLogin)
 
-    def saveMenu(self):
+    def saveWindow(self):
+        self.editWind = Toplevel()
+        self.editWind.title = 'Save as ...'
+
+        Label(self.editWind, text = 'Name:').grid(row = 4, column = 1)
+        newName = Entry(self.editWind)
+        newName.grid(row = 4, column = 2)
+       
+        Button(self.editWind, text = 'Save', command = lambda: self.saveMenu(newName.get())).grid(row = 5, column = 2, sticky = W)
+        
+        self.editWind.mainloop()
+        #self.nameValue = "nombre de orueba"
+        #print(self.nameValue)
+
+    def saveMenu(self, name):
+ 
         print('Guardar dibujo')
         """
-            * Permite abrir un menu para guardar dibujo
+        * Permite abrir un menu para guardar dibujo
         """
         c = 0
         obj = '{'
@@ -184,13 +199,15 @@ class DrawingApplication(tkinter.Frame):
         obj = obj[:-1]
         obj += '}'
         print('obj: ', obj)
+
+
         binaryObj = self.dict_to_binary(json.loads('{"data": %s}' % (obj)))
         # binaryObj = self.binary_to_dict(binaryObj)
 
         # print('binaryData: ', binaryObj)
         cnx = mysql.connector.connect(**self.credentials)
         cursor = cnx.cursor()
-        cursor.callproc('sp_createDrawing', [self.idUserLogin, "Dibujo1", binaryObj])
+        cursor.callproc('sp_createDrawing', [self.idUserLogin, name, binaryObj])
         cnx.commit()
         cnx.close()
         print('Dibujo agregado')

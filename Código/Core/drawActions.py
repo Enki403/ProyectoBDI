@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 """
+    @author hjvasquez@unah.hn
     @author nelson.sambula@unah.hn
+    @author lggutierrez@unah.hn
+    @author renata.dubon@unah.hn
+    @date 12/12/2020
     @version 0.1
-    @date 2020/12/12
 """
 import turtle
 import tkinter
@@ -50,19 +53,15 @@ class DrawAction():
         filename = tkinter.filedialog.asksaveasfilename(title="Save Picture AS...")
         self.write(filename + '.json')
     
-    def parse(self, filename):
+    def parse(self, data):
         """
             * Realizar un parseo de los registros de un archivo, para convertirtir el dibujo que representa.
         """
         dt = self.app.getApp()
-        print('fileNamae: ', filename)
-        file = open(filename,'r')
-        data = file.read()
-        dict_ = json.loads(data)
-        file.close()
+        dict_ = data['data']
         for key in dict_:
-            current = dict_[key]
-            print('current: ', current)
+            print('key: ', key)
+            current = dict_[str(key)]
             command = current['command']
             if command == "GoTo":
                 x = float(current["x"])

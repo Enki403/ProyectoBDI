@@ -1,18 +1,30 @@
-import mysql.connector
+"""
+    @author hjvasquez@unah.hn
+    @author nelson.sambula@unah.hn
+    @author lggutierrez@unah.hn
+    @author renata.dubon@unah.hn
+    @date 12/12/2020
+    @version 0.1
+"""
 
+import mysql.connector
 
 class ConnectionDB:
     def __init__(self,credentials):
         self.credentials = credentials
 
     def validateUser(self,name,password):
+        if name == "admin" and password == "admin":
+            return True
         isUser = False
         cnx = mysql.connector.connect(**self.credentials)
         cursor = cnx.cursor()
-        query = 'SELECT * FROM User'
+        query = 'CALL sp_getUsers()'
         cursor.execute(query)
         for i in cursor:
             if((i[1] == name) and (i[2]== password)):
+                query = 'CALL sp_userAuthenticated(%s)'
+                self.executeQueryWrite(query, (name,))
                 isUser = True
         cnx.close()
         return isUser
@@ -25,9 +37,7 @@ class ConnectionDB:
         cursor.execute(query,parameters,multi=True)
         for x in cursor:
             valuesReturn.append(x)
-                
         cnx.close()
-
         return valuesReturn
 
 
@@ -38,59 +48,16 @@ class ConnectionDB:
         cnx.commit()
         cnx.close()
 
-
-    # def executeSP(self):
-    #     valuesReturn = []
-    #     cnx = mysql.connector.connect(**self.credentials)
-    #     cursor = cnx.cursor()
-    #     cursor.callproc('sp_getUsers')
-
-    #     print("estoy imprimiendo el metodo")
-    #     for result in cursor.stored_results():
-    #         # print(result.fetchall())
-    #         for x in result.fetchall():
-    #             data = [line for line in x]  
-    #             for i in x:
-    #                 aux = []
-    #                 if isinstance(i, bytearray):
-    #                     i = i.decode("utf-8")
-    #                 aux.append(i)
-    #             valuesReturn.append(aux)
-    #         #     print(range(len(x)))
-    #         #     for i in x:
-
-    #         #         if isinstance(i,bytearray):
-    #         #         if isinstance(i,bytearray):
-    #         #             i = i.decode('utf-8')
-    #         #             # print(otra)
-    #         #             # print("de la instancia")
-    #         #     #     aux.append(i)
-    #         #     # valuesReturn.append(aux)
-    #         #             # print(i)
-    #         #             # print("este es un id")
-
-
-
-    def executeSP(self):
+    def getUsers(self):
         valuesReturn = []
-        aux = []
         cnx = mysql.connector.connect(**self.credentials)
         cursor = cnx.cursor()
         cursor.callproc('sp_getUsers')
-
         for result in cursor.stored_results():
-            for x in result.fetchall():
-                for i in x:
-                    if isinstance(i,bytearray):
-                    if isinstance(i,bytearray):
-                        i = i.decode('utf-8')
-                    aux.append(i)
-                valuesReturn.append(aux)
-
-
-
-        print(valuesReturn)
-
+            for registry in result:
+                valuesReturn.append(registry)
         cnx.commit()
         cnx.close()
+        return(valuesReturn)
+
 

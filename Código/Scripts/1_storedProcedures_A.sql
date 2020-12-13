@@ -1,6 +1,9 @@
 /**
- * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
- * @date 7/12/2020
+ * @author hjvasquez@unah.hn
+ * @author nelson.sambula@unah.hn
+ * @author lggutierrez@unah.hn
+ * @author renata.dubon@unah.hn
+ * @date 12/12/2020
 */
 
 USE DrawingApp;
@@ -14,7 +17,6 @@ SET @key = "admin";
 /**
  * !SP Inicialize
  * * 'Inicializa' la base de datos con los valores iniciales correspondientes.
- * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
  * @date 5/12/2020
  * @version 1
  */
@@ -38,7 +40,6 @@ END$$
 /**
  * !SP createUser
  * * Registra a un usuario, necesita como parametro nombre y contraseña
- * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
  * @date 5/12/2020
  * @version 1
  */
@@ -71,7 +72,6 @@ END$$
 /**
  * !SP deleteUser
  * * Elimina al usuario de la base de datos y todos sus dibujos, excepto al administrador
- * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
  * @date 6/12/2020
  * @version 1
  */
@@ -105,7 +105,6 @@ END$$
 /**
  * !SP getUsers
  * * Obtiene el nombre de todos los usuarios exceptuando del administrador
- * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
  * @date 6/12/2020
  * @version 1
  */
@@ -127,9 +126,33 @@ BEGIN
 END$$
 
 /**
+ * !SP getUserId
+ * * Obtiene el id del usaurio
+ * @date 6/12/2020
+ * @version 1
+ */
+DROP PROCEDURE IF EXISTS sp_getUserId$$
+CREATE PROCEDURE sp_getUserId(
+    IN NOMBRE TEXT
+)
+BEGIN
+    -- * Maneja el error de modo que retorne un json eg. { errno: 1062, msg: Duplicate entry} si existe algun problema.
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1 
+            @sqlState = RETURNED_SQLSTATE, 
+            @errno = MYSQL_ERRNO, 
+            @msgText = MESSAGE_TEXT;
+        SET @full_error = CONCAT("{ errno: ",@errno,", msg: ",@msgText,"}");
+        SELECT @full_error AS "ERROR";
+    END;
+    -- * Obtiene todos los usuarios
+    SELECT id AS "id" FROM User  WHERE blo_name = AES_ENCRYPT(NOMBRE, "admin");
+END$$
+
+/**
  * !SP modifyUserName
  * * Modifica el nombre de un usuario de OLD_NOMBRE a NOMBRE exceptuando al administrador
- * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
  * @date 6/12/2020
  * @version 1
  */
@@ -168,7 +191,6 @@ END$$
 /**
  * !SP modifyUserPass
  * * Modifica la contraseña por PASS del usuario NOMBRE exceptuando al administrador
- * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
  * @date 6/12/2020
  * @version 1
  */
@@ -209,7 +231,6 @@ END$$
 /**
  * !SP getLogbook
  * * Obtiene el los datos de la bitacora
- * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
  * @date 6/12/2020
  * @version 1
  */
@@ -223,12 +244,11 @@ BEGIN
            Logbook.tex_description AS "Description", 
            Logbook.dat_creationDate AS "Creation Date" 
     FROM Logbook, User, Activity
-    WHERE Logbook.id_user = User.id AND Logbook.id_activity = Activity.id;
+    WHERE Logbook.id_user = User.id AND Logbook.id_activity = Activity.id ORDER BY Logbook.id;
 END$$
 /**
  * !SP getConfig
  * * Obtiene el los datos de la configuracion de pen color y fill color
- * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
  * @date 7/12/2020
  * @version 1
  */
@@ -244,7 +264,6 @@ END$$
 /**
  * !SP setConfig
  * * Cambia los datos de ppen color y fill color
- * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
  * @date 7/12/2020
  * @version 1
  */
@@ -259,7 +278,7 @@ BEGIN
                 blo_fillColorValue = AES_ENCRYPT(FILL, "admin")
             WHERE id = 1;
     IF ROW_COUNT() = 1 THEN
-        INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (1, 4, CONCAT("Congiguration values has been updated.")); 
+        INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (1, 4, CONCAT("Configuration values has been updated.")); 
     END IF;
     -- * modifica los registros de configuracion b
     UPDATE DrawingAppBackup.Config 
@@ -267,14 +286,13 @@ BEGIN
                 blo_fillColorValue = AES_ENCRYPT(FILL, "admin")
             WHERE id = 1;
     IF ROW_COUNT() = 1 THEN
-        INSERT INTO DrawingAppBackup.Logbook(id_user, id_activity, tex_description) VALUES (1, 4, CONCAT("Congiguration values has been updated.")); 
+        INSERT INTO DrawingAppBackup.Logbook(id_user, id_activity, tex_description) VALUES (1, 4, CONCAT("Configuration values has been updated.")); 
     END IF;
 END$$
 
 /**
  * !SP userAuthenticated
  * * Obtiene el nombre de todos los usuarios
- * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
  * @date 6/12/2020
  * @version 1
  */
@@ -301,16 +319,15 @@ END$$
 /**
  * !SP createDrawing
  * * Crea un dibujo en la base de datos. USERID representa el id del usuario que guarda, NOMBRE representa el nombre del dibujo, DRAWDATA representa el json
- * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
  * @date 7/12/2020
  * @version 1
  */
  -- TODO: sobreescribir los datos si el dibujo existe.
 DROP PROCEDURE IF EXISTS sp_createDrawing$$
 CREATE PROCEDURE sp_createDrawing(
-    IN USERID TEXT, 
+    IN USERID INT, 
     IN NOMBRE TEXT, 
-    IN DRAWDATA TEXT)
+    IN DRAWDATA LONGTEXT)
 BEGIN
     -- * Maneja el error de modo que retorne un json eg. { errno: 1062, msg: Duplicate entry} si existe algun problema.
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -340,7 +357,6 @@ END$$
 /**
  * !SP deleteDrawing
  * * Elimina un dibujo en la base de datos. NOMBRE representa el nombre del dibujo
- * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
  * @date 8/12/2020
  * @version 1
  */
@@ -363,19 +379,18 @@ BEGIN
     -- * Elimina dibujo a la base de datos
     DELETE FROM Drawing WHERE AES_DECRYPT(blo_name, "admin") = NOMBRE;
     IF ROW_COUNT() = 1 THEN
-        INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (1, 5, CONCAT("Drawing '", NOMBRE, "' has been deleted by ", (SELECT AES_DECRYPT(User.blo_name, "admin") FROM User WHERE User.id = USERID),"."));
+        INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (USERID, 5, CONCAT("Drawing '", NOMBRE, "' has been deleted by ", (SELECT AES_DECRYPT(User.blo_name, "admin") FROM User WHERE User.id = USERID),"."));
     END IF;
     -- * Elimina dibujo a la base de datos b
     DELETE FROM DrawingAppBackup.Drawing WHERE AES_DECRYPT(blo_name, "admin") = NOMBRE;
     IF ROW_COUNT() = 1 THEN
-        INSERT INTO DrawingAppBackup.Logbook(id_user, id_activity, tex_description) VALUES (1, 5, CONCAT("Drawing '", NOMBRE, "' has been deleted by ", (SELECT AES_DECRYPT(User.blo_name, "admin") FROM User WHERE User.id = USERID),"."));
+        INSERT INTO DrawingAppBackup.Logbook(id_user, id_activity, tex_description) VALUES (USERID, 5, CONCAT("Drawing '", NOMBRE, "' has been deleted by ", (SELECT AES_DECRYPT(User.blo_name, "admin") FROM User WHERE User.id = USERID),"."));
     END IF;
 END$$
 
 /**
  * !SP getDrawings
  * * Obtiene el nombre de todos los dibujos
- * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
  * @date 8/12/2020
  * @version 1
  */
@@ -399,13 +414,12 @@ END$$
 /**
  * !SP getDrawingsByUser
  * * Obtiene el nombre de todos los dibujos de un usuario en especifico
- * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
  * @date 8/12/2020
  * @version 1
  */
 DROP PROCEDURE IF EXISTS sp_getDrawingsByUser$$
 CREATE PROCEDURE sp_getDrawingsByUser(
-    IN USERID TEXT
+    IN USERID INT
 )
 BEGIN
     -- * Maneja el error de modo que retorne un json eg. { errno: 1062, msg: Duplicate entry} si existe algun problema.
@@ -419,14 +433,12 @@ BEGIN
         SELECT @full_error AS "ERROR";
     END;
     -- * Obtiene todos los dibujos
-    SELECT Drawing.id AS "id", AES_DECRYPT(User.blo_name, "admin") AS "User", AES_DECRYPT(Drawing.blo_name, "admin") AS "Name"  FROM Drawing, User WHERE USERID = Drawing.id_user AND USERID = User.id GROUP BY Drawing.id;
+    SELECT Drawing.id AS "id", AES_DECRYPT(User.blo_name, "admin") AS "User", AES_DECRYPT(User.blo_modificationDate, "admin") AS "Date",AES_DECRYPT(Drawing.blo_name, "admin") AS "Name"  FROM Drawing, User WHERE USERID = Drawing.id_user AND USERID = User.id GROUP BY Drawing.id;
 END$$
 
--- TODO: Hacer que si el id de usuario es 1, el admin, muestre cualquier dibujo.
 /**
  * !SP getSketch
  * * Obtiene los la informacion de un dibujo en especifico.
- * @author Hector Jose Vasquez Lopez <hjvasquez@unah.hn>
  * @date 8/12/2020
  * @version 1
  */

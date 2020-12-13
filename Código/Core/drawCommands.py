@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 """
+    @author hjvasquez@unah.hn
     @author nelson.sambula@unah.hn
+    @author lggutierrez@unah.hn
+    @author renata.dubon@unah.hn
+    @date 12/12/2020
     @version 0.1
-    @date 2020/12/12
 """
 
 import turtle
@@ -40,7 +43,7 @@ class CircleCommand:
         turtle.circle(self.radius)
     
     def __str__(self):
-        return '<Command radius="' + str(self.radius) + '"width="' + str(self.width) + '"color="' + self.color + '">Circle</Command>'
+        return '{"command": "Circle", "radius": "%s", "width":"%s", "color":"%s"}' % (str(self.radius), str(self.width), self.color)
 
 class BeginFillCommand:
     def __init__(self, color):
@@ -51,7 +54,7 @@ class BeginFillCommand:
         turtle.begin_fill()
 
     def __str__(self):
-        return '<Command color="' + self.color + '">BeginFill </Command>'
+        return '{"command":"BeginFill", "color": "%s"}' % (self.color)
 
 class EndFillCommand:
     def __init__(self):
@@ -61,7 +64,7 @@ class EndFillCommand:
         turtle.end_fill()
 
     def __str__(self):
-        return "<Command>EndFill>EndFill</Command>"
+        return '{"command":"EndFill"}'
 
 class PenUpCommand:
     def __init__(self):
@@ -71,7 +74,7 @@ class PenUpCommand:
         turtle.penup()
 
     def __str__(self):
-        return "<Command>PenUp</Command>"
+        return '{"command":"PenUp"}'
 
 class PenDownCommand:
     def __init__(self):
@@ -81,7 +84,7 @@ class PenDownCommand:
         turtle.pendown()
 
     def __str__(self):
-        return "<Command>PenDown</Command>"
+        return '{"command":"PenDown"}'
 
 class PyList:
     def __init__(self):

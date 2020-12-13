@@ -1,3 +1,12 @@
+"""
+    @author hjvasquez@unah.hn
+    @author nelson.sambula@unah.hn
+    @author lggutierrez@unah.hn
+    @author renata.dubon@unah.hn
+    @date 11/12/2020
+    @version 0.1
+"""
+
 from tkinter import ttk
 from tkinter import *
 from Core.connection import *

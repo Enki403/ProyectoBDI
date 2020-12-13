@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 """
+    @author hjvasquez@unah.hn
     @author nelson.sambula@unah.hn
+    @author lggutierrez@unah.hn
+    @author renata.dubon@unah.hn
+    @date 12/12/2020
     @version 0.1
-    @date 2020/12/12
 """
 
 import tkinter.colorchooser
@@ -62,7 +65,7 @@ class DrawTools():
         app.penLabel.configure(text="Pen_Is_Up")
         app.graphicsCommands.append(cmd)
 
-    def penDownHandler():
+    def penDownHandler(self):
         app = self.app.getApp()
         cmd = PenDownCommand()
         cmd.draw(app.theTurtle)

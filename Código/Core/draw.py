@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 """
+    @author hjvasquez@unah.hn
     @author nelson.sambula@unah.hn
-    @author
-    @author
+    @author lggutierrez@unah.hn
+    @author renata.dubon@unah.hn
+    @date 12/12/2020
     @version 0.1
-    @date 2020/12/12
 """
+
 import turtle
 import tkinter
 import tkinter.colorchooser
@@ -17,6 +19,7 @@ from Core.drawActions import *
 from Core.drawTools import *
 from Core.load import *
 from Core.save import *
+from Core.connection import *
 
 
 class DrawingApplication(tkinter.Frame):
@@ -28,13 +31,14 @@ class DrawingApplication(tkinter.Frame):
     * Se construyen los componentes / herramientas para dibujar, permitidas por tkinter.
     * Se inicializan la clase de acciones sobre el dibujo, las cuales les permite al usuario decidir que hacer respecto a su dibujo.
     """
-    def __init__(self,credentials,master=None,admin=False):
+    def __init__(self,credentials, idUserLogin, master=None,admin=False):
         self.admin = admin
         self.credentials = credentials
         super().__init__(master)
         self.tkinter = tkinter
         self.turtle = turtle
         self.initializeDrawVariables()
+        self.idUserLogin = idUserLogin
 
 
     def initializeDrawVariables(self):
@@ -60,7 +64,7 @@ class DrawingApplication(tkinter.Frame):
     * Se crea las acciones sobre el dibujo y se define la funcion a ejecutar al interactuar con una determinada accion.
     """
     def createDrawActions(self):
-        self.fileMenu.add_command(label="New", command=self.action.newWindow)
+        self.fileMenu.add_command(label="New", command=self.newWindow)
         self.fileMenu.add_command(label="Load",command=self.loadMenu)
         self.fileMenu.add_command(label="Save As",command=self.saveMenu)
         # self.fileMenu.add_command(label="Download",command=self.action.downloadFile)
@@ -104,7 +108,7 @@ class DrawingApplication(tkinter.Frame):
         # Seleccion de color de pintado, color negro por defecto
         self.screen.colormode(255)
         self.penColor = self.tkinter.StringVar()
-        self.penColor.set("#000000")
+        self.penColor.set((ConnectionDB(self.credentials)).executeQueryRead("CALL sp_getConfig")[0][0])
         penLabel = self.tkinter.Label(self.sideBar, text="Pen_Color")
         penLabel.pack()
         penEntry = self.tkinter.Entry(self.sideBar, textvariable=self.penColor)
@@ -115,7 +119,7 @@ class DrawingApplication(tkinter.Frame):
 
         # Seleccion de relleno.
         self.fillColor = self.tkinter.StringVar()
-        self.fillColor.set("#4C53C6")
+        self.fillColor.set((ConnectionDB(self.credentials)).executeQueryRead("CALL sp_getConfig")[0][1])
         fillLabel = self.tkinter.Label(self.sideBar, text="Fill_Color")
         fillLabel.pack()
         fillEntry = self.tkinter.Entry(self.sideBar, textvariable=self.fillColor)
@@ -165,11 +169,98 @@ class DrawingApplication(tkinter.Frame):
             * Permite abrir un menu para elegir un dibujo de la base de datos
         """
         tl = Toplevel()
-        load = Load(tl,self.credentials)
+        load = Load(tl,self.credentials, self.action, self, self.idUserLogin)
 
     def saveMenu(self):
+        print('Guardar dibujo')
         """
-            * Permite abrir un menu para crear
+            * Permite abrir un menu para guardar dibujo
         """
-        tl = Toplevel()
-        load = Save(tl,self.credentials)
+        c = 0
+        obj = '{'
+        for cmd in self.graphicsCommands:
+            c += 1
+            obj += '"%s": %s,' % (c, cmd)
+        obj = obj[:-1]
+        obj += '}'
+        print('obj: ', obj)
+        binaryObj = self.dict_to_binary(json.loads('{"data": %s}' % (obj)))
+        # binaryObj = self.binary_to_dict(binaryObj)
+
+        # print('binaryData: ', binaryObj)
+        cnx = mysql.connector.connect(**self.credentials)
+        cursor = cnx.cursor()
+        cursor.callproc('sp_createDrawing', [self.idUserLogin, "Dibujo1", binaryObj])
+        cnx.commit()
+        cnx.close()
+        print('Dibujo agregado')
+    """
+        * Convierte el contenido json a binario
+    """
+    def dict_to_binary(self, the_dict):
+        str = json.dumps(the_dict)
+        binary = ' '.join(format(ord(letter), 'b') for letter in str)
+        return binary
+
+    """
+        * Convierte el contenido binario a json
+    """
+    def binary_to_dict(self, the_binary):
+        jsn = ''.join(chr(int(x, 2)) for x in the_binary.split())
+        d = json.loads(jsn)  
+        return d
+    
+    def loadDrawing(self, content):
+        self.parse(content)
+        for cmd in self.graphicsCommands:
+            cmd.draw(self.theTurtle)
+    
+    def parse(self, data):
+        """
+            * Realizar un parseo de los registros de un archivo, para convertirtir el dibujo que representa.
+        """
+        dict_ = data['data']
+        for key in dict_:
+            current = dict_[str(key)]
+            command = current['command']
+            if command == "GoTo":
+                x = float(current["x"])
+                y = float(current["y"])
+                width = float(current["width"])
+                color = current["color"].strip()
+                cmd = GoToCommand(x,y,width,color)
+            elif command == "Circle":
+                radius = float(current["radius"])
+                width = float(current["width"])
+                color = current["color"].strip()
+                cmd = CircleCommand(radius,width,color)
+
+            elif command == "BeginFill":
+                color = current["color"].strip()
+                cmd = BeginFillCommand(color)
+
+            elif command == "EndFill":
+                cmd = EndFillCommand()
+
+            elif command == "PenUp":
+                cmd = PenUpCommand()
+
+            elif command == "PenDown":
+                cmd = PenDownCommand()
+
+            else:
+                raise RuntimeError("Unknown Command:" + command)
+            self.graphicsCommands.append(cmd)
+            print('comando agregado')
+        self.screen.update()
+        self.screen.listen()
+    
+    def newWindow(self):
+            print('Limpiando la ventana...')
+            self.theTurtle.clear()
+            self.theTurtle.penup()
+            self.theTurtle.goto(0,0)
+            self.theTurtle.pendown()
+            self.screen.update()
+            self.screen.listen()
+            self.graphicsCommands = PyList()

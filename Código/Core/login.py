@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 """
+    @author hjvasquez@unah.hn
     @author nelson.sambula@unah.hn
+    @author lggutierrez@unah.hn
+    @author renata.dubon@unah.hn
+    @date 12/12/2020
     @version 0.1
-    @date 2020/12/12
 """
 
 from PyQt5 import QtCore, QtGui, QtWidgets

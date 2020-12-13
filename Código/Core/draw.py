@@ -56,7 +56,6 @@ class DrawingApplication(tkinter.Frame):
         
         self.action = (DrawAction(self.fileMenu, self.theTurtle, self.screen, self.graphicsCommands, self))
         self.createDrawActions()
-
     """
     * Se crea las acciones sobre el dibujo y se define la funcion a ejecutar al interactuar con una determinada accion.
     """

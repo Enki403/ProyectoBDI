@@ -3,9 +3,9 @@
  * @date 7/12/2020
 */
 
-source 0_tables.sql
-source 1_storedProcedures.sql
-
+source 0_tables_A.sql
+source 0_tables_B.sql
+source 1_storedProcedures_A.sql
 
 USE DrawingApp;
 
@@ -31,6 +31,10 @@ CALL sp_createDrawing(3, "Dibujo", '{"data":"testData"}');
 CALL sp_createDrawing(3, "Dibujos", '{"data":"testData"}');
 CALL sp_createDrawing(4, "Dibujoslocos", '{"data":"testData"}');
 
+CALL sp_deleteDrawing(3, "Dibujo");
+
 CALL sp_getUsers();
 CALL sp_getDrawings();
 CALL sp_getLogbook();
+CALL sp_getDrawingsbyUser(2);
+CALL sp_getSketch(2, "Dibujo 1");

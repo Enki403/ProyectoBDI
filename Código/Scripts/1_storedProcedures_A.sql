@@ -23,12 +23,15 @@ CREATE PROCEDURE sp_initialize()
 BEGIN
     -- *Insertar usuario administrador
     INSERT INTO User(bit_admin, blo_name, blo_password) VALUES (1, AES_ENCRYPT("admin", @key), AES_ENCRYPT("admin", @key));
+    INSERT INTO DrawingAppBackup.User(bit_admin, blo_name, blo_password) VALUES (1, AES_ENCRYPT("admin", @key), AES_ENCRYPT("admin", @key));
 
     -- *Insertar valores de configuracion
     INSERT INTO Config(blo_penColorValue, blo_fillColorValue) VALUES (AES_ENCRYPT("#000000", @key), AES_ENCRYPT("#000000", @key));
+    INSERT INTO DrawingAppBackup.Config(blo_penColorValue, blo_fillColorValue) VALUES (AES_ENCRYPT("#000000", @key), AES_ENCRYPT("#000000", @key));
 
     -- *autentication, visualization, creation, modification o elimination.
     INSERT INTO Activity(var_name) VALUES ("Autentication"), ("Visualization"), ("Creation"), ("Modification"), ("Elimination");
+    INSERT INTO DrawingAppBackup.Activity(var_name) VALUES ("Autentication"), ("Visualization"), ("Creation"), ("Modification"), ("Elimination");
 
 END$$
 
@@ -59,6 +62,10 @@ BEGIN
     IF ROW_COUNT() = 1 THEN
         INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (1, 3, CONCAT("User '", NOMBRE, "' created."));
     END IF;
+    INSERT INTO DrawingAppBackup.User(blo_name, blo_password) VALUES (AES_ENCRYPT(NOMBRE, "admin"), AES_ENCRYPT(PASS, "admin"));
+    IF ROW_COUNT() = 1 THEN
+        INSERT INTO DrawingAppBackup.Logbook(id_user, id_activity, tex_description) VALUES (1, 3, CONCAT("User '", NOMBRE, "' created."));
+    END IF;
 END$$
 
 /**
@@ -87,6 +94,10 @@ BEGIN
         DELETE FROM User WHERE AES_DECRYPT(blo_name, "admin") = NOMBRE;
         IF ROW_COUNT() = 1 THEN
             INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (1, 5, CONCAT("User '", NOMBRE, "' deleted with all its drawings."));
+        END IF;
+        DELETE FROM DrawingAppBackup.User WHERE AES_DECRYPT(blo_name, "admin") = NOMBRE;
+        IF ROW_COUNT() = 1 THEN
+            INSERT INTO DrawingAppBackup.Logbook(id_user, id_activity, tex_description) VALUES (1, 5, CONCAT("User '", NOMBRE, "' deleted with all its drawings."));
         END IF;
     END IF;
 END$$
@@ -145,6 +156,13 @@ BEGIN
     IF ROW_COUNT() = 1 THEN
         INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (1, 4, CONCAT("User with name '", OLD_NOMBRE, "' updated to '", NOMBRE,"'."));
     END IF;
+    UPDATE DrawingAppBackup.User 
+        SET blo_name = AES_ENCRYPT(NOMBRE, "admin"),
+            blo_modificationDate = AES_ENCRYPT(NOW(), "admin")
+        WHERE blo_name = AES_ENCRYPT(OLD_NOMBRE, "admin");
+    IF ROW_COUNT() = 1 THEN
+        INSERT INTO DrawingAppBackup.Logbook(id_user, id_activity, tex_description) VALUES (1, 4, CONCAT("User with name '", OLD_NOMBRE, "' updated to '", NOMBRE,"'."));
+    END IF;
 END$$
 
 /**
@@ -177,6 +195,13 @@ BEGIN
             WHERE blo_name = AES_ENCRYPT(NOMBRE, "admin");
         IF ROW_COUNT() = 1 THEN
             INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (1, 4, CONCAT("User's ('", NOMBRE, "') password has been updated.")); 
+        END IF;
+        UPDATE DrawingAppBackup.User 
+            SET blo_password = AES_ENCRYPT(PASS, "admin"),
+                blo_modificationDate = AES_ENCRYPT(NOW(), "admin")
+            WHERE blo_name = AES_ENCRYPT(NOMBRE, "admin");
+        IF ROW_COUNT() = 1 THEN
+            INSERT INTO DrawingAppBackup.Logbook(id_user, id_activity, tex_description) VALUES (1, 4, CONCAT("User's ('", NOMBRE, "') password has been updated.")); 
         END IF;
     END IF;
 END$$
@@ -236,6 +261,14 @@ BEGIN
     IF ROW_COUNT() = 1 THEN
         INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (1, 4, CONCAT("Congiguration values has been updated.")); 
     END IF;
+    -- * modifica los registros de configuracion b
+    UPDATE DrawingAppBackup.Config 
+            SET blo_penColorValue = AES_ENCRYPT(PEN, "admin"),
+                blo_fillColorValue = AES_ENCRYPT(FILL, "admin")
+            WHERE id = 1;
+    IF ROW_COUNT() = 1 THEN
+        INSERT INTO DrawingAppBackup.Logbook(id_user, id_activity, tex_description) VALUES (1, 4, CONCAT("Congiguration values has been updated.")); 
+    END IF;
 END$$
 
 /**
@@ -261,6 +294,8 @@ BEGIN
     END;
     -- * Se agrega un registro a la bitacora
     INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (1, 1, CONCAT("User ('", NOMBRE, "') has been authenticated."));
+    -- * Se agrega un registro a la bitacora b
+    INSERT INTO DrawingAppBackup.Logbook(id_user, id_activity, tex_description) VALUES (1, 1, CONCAT("User ('", NOMBRE, "') has been authenticated."));
 END$$
 
 /**
@@ -270,6 +305,7 @@ END$$
  * @date 7/12/2020
  * @version 1
  */
+ -- TODO: sobreescribir los datos si el dibujo existe.
 DROP PROCEDURE IF EXISTS sp_createDrawing$$
 CREATE PROCEDURE sp_createDrawing(
     IN USERID TEXT, 
@@ -292,6 +328,12 @@ BEGIN
         (USERID, AES_ENCRYPT(NOMBRE, "admin"), AES_ENCRYPT(DRAWDATA, "admin"));
     IF ROW_COUNT() = 1 THEN
         INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (USERID, 3, CONCAT("Drawing '", NOMBRE, "' has been created by ", (SELECT AES_DECRYPT(User.blo_name, "admin") FROM User WHERE User.id = USERID),"."));
+    END IF;
+    -- * Inserta dibujo a la base de datos b
+    INSERT INTO DrawingAppBackup.Drawing(id_user, blo_name, blo_blob) VALUES 
+        (USERID, AES_ENCRYPT(NOMBRE, "admin"), AES_ENCRYPT(DRAWDATA, "admin"));
+    IF ROW_COUNT() = 1 THEN
+        INSERT INTO DrawingAppBackup.Logbook(id_user, id_activity, tex_description) VALUES (USERID, 3, CONCAT("Drawing '", NOMBRE, "' has been created by ", (SELECT AES_DECRYPT(User.blo_name, "admin") FROM User WHERE User.id = USERID),"."));
     END IF;
 END$$
 
@@ -322,6 +364,11 @@ BEGIN
     DELETE FROM Drawing WHERE AES_DECRYPT(blo_name, "admin") = NOMBRE;
     IF ROW_COUNT() = 1 THEN
         INSERT INTO Logbook(id_user, id_activity, tex_description) VALUES (1, 5, CONCAT("Drawing '", NOMBRE, "' has been deleted by ", (SELECT AES_DECRYPT(User.blo_name, "admin") FROM User WHERE User.id = USERID),"."));
+    END IF;
+    -- * Elimina dibujo a la base de datos b
+    DELETE FROM DrawingAppBackup.Drawing WHERE AES_DECRYPT(blo_name, "admin") = NOMBRE;
+    IF ROW_COUNT() = 1 THEN
+        INSERT INTO DrawingAppBackup.Logbook(id_user, id_activity, tex_description) VALUES (1, 5, CONCAT("Drawing '", NOMBRE, "' has been deleted by ", (SELECT AES_DECRYPT(User.blo_name, "admin") FROM User WHERE User.id = USERID),"."));
     END IF;
 END$$
 
@@ -372,7 +419,7 @@ BEGIN
         SELECT @full_error AS "ERROR";
     END;
     -- * Obtiene todos los dibujos
-    SELECT Drawing.id AS "id", AES_DECRYPT(User.blo_name, "admin") AS "User", AES_DECRYPT(Drawing.blo_name, "admin") AS "Name"  FROM Drawing, User WHERE USERID = User.id;
+    SELECT Drawing.id AS "id", AES_DECRYPT(User.blo_name, "admin") AS "User", AES_DECRYPT(Drawing.blo_name, "admin") AS "Name"  FROM Drawing, User WHERE USERID = Drawing.id_user AND USERID = User.id GROUP BY Drawing.id;
 END$$
 
 -- TODO: Hacer que si el id de usuario es 1, el admin, muestre cualquier dibujo.
@@ -407,7 +454,5 @@ BEGIN
     END IF;
 END$$
 
-
--- * SELECT id, id_user, AES_DECRYPT(blo_name, "admin") as "blo_name", AES_DECRYPT(blo_blob, "admin") as "blo_blob",AES_DECRYPT(blo_creationDate, "admin") as "blo_creationDate", AES_DECRYPT(blo_modificationDate, "admin") as "blo_modifcationDate" FROM Drawing;
 
 DELIMITER ;

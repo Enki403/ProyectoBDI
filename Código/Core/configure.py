@@ -78,12 +78,16 @@ class Config:
 
     #Este metodo muestra los valores de la DB en la tabla de configuracion
     def getUsers(self):
+        self.cnx.executeSP()
         #Limpiando los datos que existen en la tabla
         records = self.tree.get_children()
         for element in records:
             self.tree.delete(element)
-        query = 'SELECT * FROM User'
+        query = 'CALL sp_getUsers();'
+
+        print("Estoy imprimiendo el rows")
         rows = self.cnx.executeQueryRead(query)
+        print(rows)
         # rows = self.cnx.executeSP(query)
         for row in rows:
             self.tree.insert('',0,text= row[1],values=row)

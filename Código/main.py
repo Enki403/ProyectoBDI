@@ -11,6 +11,9 @@ from Core.startApplication import *
 from Core.connection import *
 from Core.login import *
 import sys
+import os
+
+os.system("ls")
 
 """
     ? Se Obtienen las credenciales de configuracion de la base de datos del usuario de

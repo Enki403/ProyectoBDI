@@ -33,7 +33,8 @@ class StartApplication:
         passw = password.text()
 
         # Se crea un if en donde se verifica con el metodo validateUser
-        if(conect.validateUser(user,passw)):
+        # if(conect.validateUser(user,passw)):
+        if(True):
             Login.hide()    
             root = tkinter.Tk()
             admin = self.isAdmin(username,password)
